@@ -1,1 +1,1 @@
-# ARNavigator
+Android Studio version: 2.2 BETA
