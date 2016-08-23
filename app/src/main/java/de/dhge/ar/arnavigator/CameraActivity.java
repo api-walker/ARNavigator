@@ -1,5 +1,6 @@
 package de.dhge.ar.arnavigator;
 
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import me.dm7.barcodescanner.zbar.Result;
@@ -17,26 +19,30 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView;
 
 public class CameraActivity extends AppCompatActivity implements ZBarScannerView.ResultHandler{
     private ZBarScannerView mScannerView;
+    private LinearLayout arPopupMenu;
+
+    private String result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+        // setup Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Add ZBar scanner view
         ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
         mScannerView = new ZBarScannerView(this);
         contentFrame.addView(mScannerView);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.btn_route);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
+        // Initialize
+        // Hide popup menu
+        arPopupMenu = (LinearLayout) findViewById(R.id.ar_popup_menu);
+        arPopupMenu.setVisibility(View.GONE);
+
+        setListeners();
     }
 
     @Override
@@ -76,8 +82,33 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
 
     @Override
     public void handleResult(Result rawResult) {
-        Toast.makeText(this, "Contents = " + rawResult.getContents() +
-                ", Format = " + rawResult.getBarcodeFormat().getName(), Toast.LENGTH_SHORT).show();
+        // Only allow QR Codes
+        if (rawResult.getBarcodeFormat().getName().equals("QRCODE"))
+        {
+            arPopupMenu.setVisibility(View.VISIBLE);
+            result = rawResult.getContents();
+            Toast.makeText(this, "Contents = " + rawResult.getContents() +
+                    ", Format = " + rawResult.getBarcodeFormat().getName(), Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+           restartCamera();
+        }
+    }
+
+    private void setListeners() {
+        // User touched not at popup menu
+        mScannerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                arPopupMenu.setVisibility(View.GONE);
+                restartCamera();
+            }
+        });
+    }
+
+    // Restarts the camera from suspened mode
+    private void restartCamera() {
         // Note:
         // * Wait 2 seconds to resume the preview.
         // * On older devices continuously stopping and resuming camera preview can result in freezing the app.
@@ -88,6 +119,6 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
             public void run() {
                 mScannerView.resumeCameraPreview(CameraActivity.this);
             }
-        }, 2000);
+        }, 500);
     }
 }
