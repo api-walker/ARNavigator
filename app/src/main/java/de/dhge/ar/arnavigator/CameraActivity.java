@@ -29,7 +29,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
         mScannerView = new ZBarScannerView(this);
         contentFrame.addView(mScannerView);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.btn_route);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
