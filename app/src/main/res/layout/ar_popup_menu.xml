@@ -8,46 +8,51 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/lbl_identifier"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:shadowColor="@color/ar_object_text_shadow"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="2"
-        android:textAlignment="center"
-        android:textColor="@color/ar_object_text"
-        android:textSize="@dimen/big_text" />
+        android:layout_height="wrap_content">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/btn_route"
+        <TextView
+            android:id="@+id/lbl_identifier"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            app:srcCompat="@android:drawable/ic_menu_directions" />
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/btn_location"
+            android:layout_marginLeft="@dimen/ar_icon_margin"
+            android:layout_marginRight="@dimen/ar_icon_margin"
+            android:shadowColor="@color/ar_object_text_shadow"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:text="Raum S2"
+            android:textColor="@color/ar_object_text"
+            android:textSize="@dimen/big_text" />
+
+        <ImageView
+            android:id="@+id/img_ar_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            app:srcCompat="@android:drawable/ic_menu_mylocation" />
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/lbl_identifier"
+            android:layout_toStartOf="@+id/lbl_identifier"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/ic_room" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/btn_info"
+        <ProgressBar
+            android:id="@+id/pb_ar_load_url"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            app:srcCompat="@android:drawable/ic_menu_info_details" />
-    </LinearLayout>
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/lbl_identifier"
+            android:layout_toRightOf="@+id/lbl_identifier"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/colorAccent"
+            android:indeterminateTintMode="src_atop" />
+    </RelativeLayout>
+
+    <WebView
+        android:id="@+id/webview_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>

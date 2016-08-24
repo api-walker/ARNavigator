@@ -5,11 +5,11 @@ package de.dhge.ar.arnavigator;
  */
 
 public class ContentType {
-    public static String ROOM = "ROOM";
-    public static String MAP = "MAP";
-    public static String EXIT = "EXIT";
-    public static String STAIRS_UP = "STAIRS_UP";
-    public static String STAIRS_DOWN = "STAIRS_DOWN";
-    public static String ADJUSTMENT_POINT = "ADJUSTMENT_POINT";
-    public static String ONLINE_TARGET = "ONLINE_TARGET";
+    public static final String ROOM = "ROOM";
+    public static final String MAP = "MAP";
+    public static final String EXIT = "EXIT";
+    public static final String STAIRS_UP = "STAIRS_UP";
+    public static final String STAIRS_DOWN = "STAIRS_DOWN";
+    public static final String ADJUSTMENT_POINT = "ADJUSTMENT_POINT";
+    public static final String ONLINE_TARGET = "ONLINE_TARGET";
 }
