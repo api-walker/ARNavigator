@@ -184,6 +184,9 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
                 case ContentType.ROOM:
                     arTypeIcon.setImageResource(R.drawable.ic_room);
                     break;
+                case ContentType.MEDIA:
+                    arTypeIcon.setImageResource(R.drawable.ic_media);
+                    break;
                 case ContentType.MAP:
                     arTypeIcon.setImageResource(R.drawable.ic_map);
                     break;
@@ -196,6 +199,10 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
             // Handle types
             switch (cp.getType()) {
                 case ContentType.ROOM:
+                    // Set webView
+                    webView.loadData(cp.getContent(), "text/html", null);
+                    break;
+                case ContentType.MEDIA:
                     // Set webView
                     webView.loadData(cp.getContent(), "text/html", null);
                     break;
