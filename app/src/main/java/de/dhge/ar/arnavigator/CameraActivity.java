@@ -1,10 +1,17 @@
 package de.dhge.ar.arnavigator;
 
+import android.Manifest;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -39,27 +46,18 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     private String result;
     private boolean arShow = false;
 
+    // Permission constants
+    private final int PERMISSION_CAMERA = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
-        // setup Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        // Add ZBar scanner view
-        ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
-        mScannerView = new ZBarScannerView(this);
-        contentFrame.addView(mScannerView);
+        getPermissions();
 
-
-        // Initialize views
-        arPopupMenu = (LinearLayout) findViewById(R.id.ar_popup_menu);
-        webView = (WebView) findViewById(R.id.webview_content);
-        routeButton = (FloatingActionButton) findViewById(R.id.btn_route);
-        identifierLabel = (TextView) findViewById(R.id.lbl_identifier);
-        arTypeIcon = (ImageView) findViewById(R.id.img_ar_type);
-        arLoadUrlProgressBar = (ProgressBar) findViewById(R.id.pb_ar_load_url);
+        // Assign View IDs and general setup
+        initializeViews();
 
         // Hide ar views
         toggleARContent(false);
@@ -105,12 +103,44 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
 
     @Override
     public void onBackPressed() {
-        if(arShow) {
+        if (arShow) {
             toggleARContent(false);
             restartCamera();
-        }
-        else {
+        } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_CAMERA: {
+                // Show an error dialog if permission is denied
+                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                            this);
+                    // set title
+                    alertDialogBuilder.setTitle(getString(R.string.camera_permission));
+
+                    // set dialog message
+                    alertDialogBuilder
+                            .setMessage(getString(R.string.camera_permission_denied))
+                            .setCancelable(false)
+                            .setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    // Close the camera app
+                                    CameraActivity.this.finish();
+                                }
+                            });
+
+                    // create alert dialog
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+
+                    // show it
+                    alertDialog.show();
+                }
+            }
+
         }
     }
 
@@ -146,8 +176,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
             cp = new ContentParser(result);
 
             // Set header
-            switch(cp.getType())
-            {
+            switch (cp.getType()) {
                 case ContentType.ROOM:
                     arTypeIcon.setImageResource(R.drawable.ic_room);
                     break;
@@ -161,8 +190,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
             identifierLabel.setText(cp.getName());
 
             // Handle types
-            switch(cp.getType())
-            {
+            switch (cp.getType()) {
                 case ContentType.ROOM:
                     // Set webView
                     webView.loadData(cp.getContent(), "text/html", null);
@@ -222,7 +250,37 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
         }
     }
 
+    // Permissions
+    private void getPermissions() {
+        // Only request permissions for Marshmallow and higher
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                // Should we show an explanation?
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_CAMERA);
+            }
+        }
+    }
+
     // Setup
+    private void initializeViews() {
+        // setup Toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // Add ZBar scanner view
+        ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
+        mScannerView = new ZBarScannerView(this);
+        contentFrame.addView(mScannerView);
+
+        // Initialize views
+        arPopupMenu = (LinearLayout) findViewById(R.id.ar_popup_menu);
+        webView = (WebView) findViewById(R.id.webview_content);
+        routeButton = (FloatingActionButton) findViewById(R.id.btn_route);
+        identifierLabel = (TextView) findViewById(R.id.lbl_identifier);
+        arTypeIcon = (ImageView) findViewById(R.id.img_ar_type);
+        arLoadUrlProgressBar = (ProgressBar) findViewById(R.id.pb_ar_load_url);
+    }
+
     private void setListeners() {
         // User touched not at popup menu
         mScannerView.setOnClickListener(new View.OnClickListener() {

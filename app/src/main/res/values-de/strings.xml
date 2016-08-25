@@ -3,4 +3,6 @@
     <string name="app_name">ARNavigator</string>
     <string name="action_settings">Einstellungen</string>
     <string name="action_history">Verlauf</string>
+    <string name="camera_permission">Kamera-Berechtigung</string>
+    <string name="camera_permission_denied">Diese App muss auf die Kamera zwingend zugreifen und benötigt daher unbedingt die Berechtigung!</string>
 </resources>
