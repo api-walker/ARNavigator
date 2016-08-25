@@ -64,7 +64,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
         initializeViews();
 
         // Hide ar views
-        // toggleARContent(false);
+        toggleARContent(false);
 
         setupWebView();
         setListeners();
