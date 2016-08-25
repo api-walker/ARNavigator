@@ -2,6 +2,7 @@ package de.dhge.ar.arnavigator;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
@@ -45,6 +46,8 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
 
     private String result;
     private boolean arShow = false;
+
+    private AppCompatActivity context = this;
 
     // Permission constants
     private final int PERMISSION_CAMERA = 1;
@@ -288,6 +291,14 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
             public void onClick(View view) {
                 toggleARContent(false);
                 restartCamera();
+            }
+        });
+
+        routeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent navIntent = new Intent(context, NavigationActivity.class);
+                startActivity(navIntent);
             }
         });
     }
