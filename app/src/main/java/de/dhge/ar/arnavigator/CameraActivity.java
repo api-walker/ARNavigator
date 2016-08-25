@@ -36,6 +36,10 @@ import me.dm7.barcodescanner.zbar.Result;
 import me.dm7.barcodescanner.zbar.ZBarScannerView;
 
 public class CameraActivity extends AppCompatActivity implements ZBarScannerView.ResultHandler {
+    // Permission constants
+    private final int PERMISSION_CAMERA = 1;
+
+    // Views
     private ZBarScannerView mScannerView;
     private LinearLayout arPopupMenu;
     private WebView webView;
@@ -43,14 +47,11 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     private TextView identifierLabel;
     private ImageView arTypeIcon;
     private ProgressBar arLoadUrlProgressBar;
-
     private String result;
     private boolean arShow = false;
 
+    // Context
     private AppCompatActivity context = this;
-
-    // Permission constants
-    private final int PERMISSION_CAMERA = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,8 +130,8 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
                     alertDialogBuilder
                             .setMessage(getString(R.string.camera_permission_denied))
                             .setCancelable(false)
-                            .setPositiveButton("OK",new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
                                     // Close the camera app
                                     CameraActivity.this.finish();
                                 }

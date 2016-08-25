@@ -5,24 +5,19 @@
 package de.dhge.ar.arnavigator;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.hardware.Camera;
-import android.util.AttributeSet;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
-import me.dm7.barcodescanner.core.BarcodeScannerView;
-import me.dm7.barcodescanner.core.CameraHandlerThread;
 import me.dm7.barcodescanner.core.CameraPreview;
 import me.dm7.barcodescanner.core.CameraUtils;
 import me.dm7.barcodescanner.core.CameraWrapper;
 import me.dm7.barcodescanner.core.IViewFinder;
 
-public class NavigationView extends FrameLayout implements Camera.PreviewCallback  {
+public class NavigationView extends FrameLayout implements Camera.PreviewCallback {
     private CameraWrapper mCameraWrapper;
     private CameraPreview mPreview;
     private IViewFinder mViewFinderView;
@@ -53,7 +48,7 @@ public class NavigationView extends FrameLayout implements Camera.PreviewCallbac
     }
 
     public void startCamera(int cameraId) {
-        if(mCameraHandlerThread == null) {
+        if (mCameraHandlerThread == null) {
             mCameraHandlerThread = new NavigationHandlerThread(this);
         }
         mCameraHandlerThread.startCamera(cameraId);
@@ -61,9 +56,9 @@ public class NavigationView extends FrameLayout implements Camera.PreviewCallbac
 
     public void setupCameraPreview(CameraWrapper cameraWrapper) {
         mCameraWrapper = cameraWrapper;
-        if(mCameraWrapper != null) {
+        if (mCameraWrapper != null) {
             setupLayout(mCameraWrapper);
-            if(mFlashState != null) {
+            if (mFlashState != null) {
                 setFlash(mFlashState);
             }
             setAutoFocus(mAutofocusState);
@@ -75,54 +70,34 @@ public class NavigationView extends FrameLayout implements Camera.PreviewCallbac
     }
 
     public void stopCamera() {
-        if(mCameraWrapper != null) {
+        if (mCameraWrapper != null) {
             mPreview.stopCameraPreview();
             mPreview.setCamera(null, null);
             mCameraWrapper.mCamera.release();
             mCameraWrapper = null;
         }
-        if(mCameraHandlerThread != null) {
+        if (mCameraHandlerThread != null) {
             mCameraHandlerThread.quit();
             mCameraHandlerThread = null;
         }
     }
 
     public void stopCameraPreview() {
-        if(mPreview != null) {
+        if (mPreview != null) {
             mPreview.stopCameraPreview();
         }
     }
 
     protected void resumeCameraPreview() {
-        if(mPreview != null) {
+        if (mPreview != null) {
             mPreview.showCameraPreview();
         }
     }
 
-    public void setFlash(boolean flag) {
-        mFlashState = flag;
-        if(mCameraWrapper != null && CameraUtils.isFlashSupported(mCameraWrapper.mCamera)) {
-
-            Camera.Parameters parameters = mCameraWrapper.mCamera.getParameters();
-            if(flag) {
-                if(parameters.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH)) {
-                    return;
-                }
-                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-            } else {
-                if(parameters.getFlashMode().equals(Camera.Parameters.FLASH_MODE_OFF)) {
-                    return;
-                }
-                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-            }
-            mCameraWrapper.mCamera.setParameters(parameters);
-        }
-    }
-
     public boolean getFlash() {
-        if(mCameraWrapper != null && CameraUtils.isFlashSupported(mCameraWrapper.mCamera)) {
+        if (mCameraWrapper != null && CameraUtils.isFlashSupported(mCameraWrapper.mCamera)) {
             Camera.Parameters parameters = mCameraWrapper.mCamera.getParameters();
-            if(parameters.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH)) {
+            if (parameters.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH)) {
                 return true;
             } else {
                 return false;
@@ -131,10 +106,30 @@ public class NavigationView extends FrameLayout implements Camera.PreviewCallbac
         return false;
     }
 
-    public void toggleFlash() {
-        if(mCameraWrapper != null && CameraUtils.isFlashSupported(mCameraWrapper.mCamera)) {
+    public void setFlash(boolean flag) {
+        mFlashState = flag;
+        if (mCameraWrapper != null && CameraUtils.isFlashSupported(mCameraWrapper.mCamera)) {
+
             Camera.Parameters parameters = mCameraWrapper.mCamera.getParameters();
-            if(parameters.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH)) {
+            if (flag) {
+                if (parameters.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH)) {
+                    return;
+                }
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            } else {
+                if (parameters.getFlashMode().equals(Camera.Parameters.FLASH_MODE_OFF)) {
+                    return;
+                }
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+            }
+            mCameraWrapper.mCamera.setParameters(parameters);
+        }
+    }
+
+    public void toggleFlash() {
+        if (mCameraWrapper != null && CameraUtils.isFlashSupported(mCameraWrapper.mCamera)) {
+            Camera.Parameters parameters = mCameraWrapper.mCamera.getParameters();
+            if (parameters.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH)) {
                 parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
             } else {
                 parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
@@ -145,7 +140,7 @@ public class NavigationView extends FrameLayout implements Camera.PreviewCallbac
 
     public void setAutoFocus(boolean state) {
         mAutofocusState = state;
-        if(mPreview != null) {
+        if (mPreview != null) {
             mPreview.setAutoFocus(state);
         }
     }

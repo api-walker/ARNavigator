@@ -28,13 +28,16 @@ public class ContentParser {
 
     /**
      * Get type of object
+     *
      * @return String type
      */
     public String getType() {
         return getCustomNode("type");
     }
+
     /**
      * Get name of object
+     *
      * @return String name
      */
     public String getName() {
@@ -43,6 +46,7 @@ public class ContentParser {
 
     /**
      * Get id of object
+     *
      * @return String id
      */
     public String getID() {
@@ -51,6 +55,7 @@ public class ContentParser {
 
     /**
      * Get content of object (shown in App->Info)
+     *
      * @return String content
      */
     public String getContent() {
@@ -59,6 +64,7 @@ public class ContentParser {
 
     /**
      * Get custom meta tag
+     *
      * @param name Name of custom tag
      * @return String content of tag
      */

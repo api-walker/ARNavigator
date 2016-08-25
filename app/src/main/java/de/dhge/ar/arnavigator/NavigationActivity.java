@@ -1,18 +1,10 @@
 package de.dhge.ar.arnavigator;
 
-import android.content.res.Configuration;
-import android.hardware.Camera;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
-import me.dm7.barcodescanner.core.CameraPreview;
-import me.dm7.barcodescanner.core.CameraWrapper;
-
-public class NavigationActivity extends AppCompatActivity{
+public class NavigationActivity extends AppCompatActivity {
 
     private NavigationView mNavigationView;
 
