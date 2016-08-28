@@ -4,6 +4,6 @@
       <type>ROOM</type>
       <name>Labor</name>
       <id>1</id>
-      <content>Room called 'Labor'</content>
+      <content raw="true">Room called 'Labor'</content>
    </Meta>
 </QRContent> 
