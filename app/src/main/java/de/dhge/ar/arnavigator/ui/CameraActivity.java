@@ -35,6 +35,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import de.dhge.ar.arnavigator.R;
 import de.dhge.ar.arnavigator.util.ContentParser;
 import de.dhge.ar.arnavigator.util.ContentType;
+import de.dhge.ar.arnavigator.util.HTMLFormatter;
 import me.dm7.barcodescanner.zbar.Result;
 import me.dm7.barcodescanner.zbar.ZBarScannerView;
 
@@ -219,12 +220,22 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
             switch (cp.getType()) {
                 case ContentType.ROOM:
                     // Set webView
-                    webView.loadData(cp.getContent(), "text/html", null);
+                    String roomContent = cp.getContent();
+
+                    if(cp.isRawContent()) {
+                        roomContent = new HTMLFormatter(roomContent).prettyPrint("white", "none", "20pt", "");
+                    }
+                    webView.loadData(roomContent, "text/html", null);
                     break;
                 case ContentType.MEDIA:
+                    String mediaContent = cp.getContent();
+
+                    if(cp.isRawContent()) {
+                        mediaContent = new HTMLFormatter(mediaContent).getWebSite();
+                    }
                     // Set webView
                     showARWebViewProgressbar(true);
-                    webView.loadData(cp.getContent(), "text/html", null);
+                    webView.loadData(mediaContent, "text/html", null);
                     break;
                 case ContentType.MAP:
                     arTypeIcon.setImageResource(R.drawable.ic_map);
