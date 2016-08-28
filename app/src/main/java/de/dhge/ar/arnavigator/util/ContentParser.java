@@ -2,6 +2,7 @@ package de.dhge.ar.arnavigator.util;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
@@ -54,7 +55,17 @@ public class ContentParser {
     }
 
     /**
-     * Get content of object (shown in App->Info)
+     * Get type of content of object (raw?)
+     *
+     * @return Boolean isRaw
+     */
+    public boolean isRawContent() {
+        Node attr = metaNode.getElementsByTagName("content").item(0).getAttributes().getNamedItem("raw");
+        return attr != null && attr.getNodeValue().equals("true");
+    }
+
+    /**
+     * Get content of object (shown in ARPopup)
      *
      * @return String content
      */

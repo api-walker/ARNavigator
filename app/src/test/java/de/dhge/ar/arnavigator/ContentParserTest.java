@@ -13,6 +13,7 @@ import static org.junit.Assert.*;
  */
 public class ContentParserTest {
     private final String specXML = "<?xml version=\"1.0\"?><QRContent><Meta><type>ROOM</type><name>Labor</name><id>1</id><content><![CDATA[<b>Bold</b>]]></content></Meta></QRContent>";
+    private final String specXMLWithRawContent = "<?xml version=\"1.0\"?><QRContent><Meta><type>ROOM</type><name>Labor</name><id>1</id><content raw=\"true\"><![CDATA[<b>Bold</b>]]></content></Meta></QRContent>";
 
     @Test
     public void getType() throws Exception {
@@ -36,6 +37,18 @@ public class ContentParserTest {
     public void getContent() throws Exception {
         ContentParser cp = new ContentParser(specXML);
         assertEquals("<b>Bold</b>", cp.getContent());
+    }
+
+    @Test
+    public void isRawContent() throws Exception {
+        ContentParser cp = new ContentParser(specXMLWithRawContent);
+        assertEquals(true, cp.isRawContent());
+    }
+
+    @Test
+    public void isRawContentWithoutAttribute() throws Exception {
+        ContentParser cp = new ContentParser(specXML);
+        assertEquals(false, cp.isRawContent());
     }
 
     @Test
