@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">ARNavigator</string>
-    <string name="action_settings">Settings</string>
     <string name="action_history">History</string>
     <string name="camera_permission">Permission for the camera</string>
     <string name="camera_permission_denied">Sorry, the camera is needed for this app to run correctly!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

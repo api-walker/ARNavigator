@@ -22,9 +22,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.NavigationActivity">
-        </activity>
+        <activity android:name=".ui.NavigationActivity" />
+        <activity android:name=".ui.HistoryActivity"></activity>
     </application>
 
 </manifest>

@@ -89,16 +89,14 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState )
-    {
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         // Prevent webView video playback
         resetWebView();
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState)
-    {
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         webView.restoreState(savedInstanceState);
     }
@@ -118,8 +116,9 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_history) {
+            Intent historyIntent = new Intent(this, HistoryActivity.class);
+            startActivity(historyIntent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -222,7 +221,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
                     // Set webView
                     String roomContent = cp.getContent();
 
-                    if(cp.isRawContent()) {
+                    if (cp.isRawContent()) {
                         roomContent = new HTMLFormatter(roomContent).prettyPrint("white", "none", "20pt", "");
                     }
                     webView.loadData(roomContent, "text/html", null);
@@ -230,7 +229,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
                 case ContentType.MEDIA:
                     String mediaContent = cp.getContent();
 
-                    if(cp.isRawContent()) {
+                    if (cp.isRawContent()) {
                         mediaContent = new HTMLFormatter(mediaContent).getWebSite();
                     }
                     // Set webView
@@ -351,15 +350,6 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
                 mScannerView.toggleFlash();
             }
         });
-
-//        OrientationEventListener orientationListener =  new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL){
-//            @Override
-//            public void onOrientationChanged(int i) {
-//                //Log.d("AR", "Orientation: " + i);
-//            }
-//        };
-//
-//        orientationListener.enable();
     }
 
     private void resetWebView() {
