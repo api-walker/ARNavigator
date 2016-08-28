@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+    android:paddingTop="@dimen/ar_popup_vertical_margin"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -25,9 +26,11 @@
             android:shadowDx="1"
             android:shadowDy="1"
             android:shadowRadius="2"
-            android:text="Raum S2"
+            android:text="World's Best Magician 12345678"
             android:textColor="@color/ar_object_text"
-            android:textSize="@dimen/big_text" />
+            android:gravity="center"
+            android:textSize="@dimen/big_text"
+            android:maxWidth="@dimen/ar_object_name_max_width" />
 
         <ImageView
             android:id="@+id/img_ar_type"

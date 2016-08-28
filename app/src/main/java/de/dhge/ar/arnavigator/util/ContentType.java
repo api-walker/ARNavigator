@@ -1,4 +1,4 @@
-package de.dhge.ar.arnavigator;
+package de.dhge.ar.arnavigator.util;
 
 /**
  * Class which holds possible content types

@@ -2,7 +2,7 @@
  * This code is adapted from BarcodeScannerView.java(https://github.com/dm77/barcodescanner/blob/b23c3bab18a14e912341ffb7ca28d0894a572d3e/core/src/main/java/me/dm7/barcodescanner/core/BarcodeScannerView.java)
  * The purpose is to have the camera features of the lib without the scanner masks etc.
  */
-package de.dhge.ar.arnavigator;
+package de.dhge.ar.arnavigator.ui;
 
 import android.content.Context;
 import android.graphics.Color;

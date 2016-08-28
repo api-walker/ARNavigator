@@ -1,7 +1,7 @@
 /* This code is adapted from CameraHandlerThread.java(https://github.com/dm77/barcodescanner/blob/b23c3bab18a14e912341ffb7ca28d0894a572d3e/core/src/main/java/me/dm7/barcodescanner/core/CameraHandlerThread.java)
  * It's modified to fit the new Classes
 */
-package de.dhge.ar.arnavigator;
+package de.dhge.ar.arnavigator.ui;
 
 import android.hardware.Camera;
 import android.os.Handler;

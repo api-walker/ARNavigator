@@ -1,4 +1,4 @@
-package de.dhge.ar.arnavigator;
+package de.dhge.ar.arnavigator.util;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

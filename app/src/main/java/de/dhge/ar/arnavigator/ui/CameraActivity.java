@@ -1,4 +1,4 @@
-package de.dhge.ar.arnavigator;
+package de.dhge.ar.arnavigator.ui;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -32,6 +32,9 @@ import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import de.dhge.ar.arnavigator.R;
+import de.dhge.ar.arnavigator.util.ContentParser;
+import de.dhge.ar.arnavigator.util.ContentType;
 import me.dm7.barcodescanner.zbar.Result;
 import me.dm7.barcodescanner.zbar.ZBarScannerView;
 
@@ -44,6 +47,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     private LinearLayout arPopupMenu;
     private WebView webView;
     private FloatingActionButton routeButton;
+    private ImageView flashButton;
     private TextView identifierLabel;
     private ImageView arTypeIcon;
     private ProgressBar arLoadUrlProgressBar;
@@ -204,6 +208,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
                     break;
                 case ContentType.MEDIA:
                     // Set webView
+                    showARWebViewProgressbar(true);
                     webView.loadData(cp.getContent(), "text/html", null);
                     break;
                 case ContentType.MAP:
@@ -287,6 +292,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
         arPopupMenu = (LinearLayout) findViewById(R.id.ar_popup_menu);
         webView = (WebView) findViewById(R.id.webview_content);
         routeButton = (FloatingActionButton) findViewById(R.id.btn_route);
+        flashButton = (ImageView) findViewById(R.id.iv_flash);
         identifierLabel = (TextView) findViewById(R.id.lbl_identifier);
         arTypeIcon = (ImageView) findViewById(R.id.img_ar_type);
         arLoadUrlProgressBar = (ProgressBar) findViewById(R.id.pb_ar_load_url);
@@ -306,9 +312,28 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
             @Override
             public void onClick(View view) {
                 Intent navIntent = new Intent(context, NavigationActivity.class);
+                // Transmit flash state
+                navIntent.putExtra("flash_enabled", mScannerView.getFlash());
                 startActivity(navIntent);
             }
         });
+
+        // Toggle flashlight
+        flashButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mScannerView.toggleFlash();
+            }
+        });
+
+//        OrientationEventListener orientationListener =  new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL){
+//            @Override
+//            public void onOrientationChanged(int i) {
+//                //Log.d("AR", "Orientation: " + i);
+//            }
+//        };
+//
+//        orientationListener.enable();
     }
 
     private void resetWebView() {
@@ -317,7 +342,16 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
 
     private void setupWebView() {
         webView.setBackgroundColor(Color.TRANSPARENT);
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient() {
+
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                if (webView.getProgress() == 100) {
+                    showARWebViewProgressbar(false);
+                }
+            }
+        });
+        // webView.setWebViewClient(new WebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);
     }
 }
