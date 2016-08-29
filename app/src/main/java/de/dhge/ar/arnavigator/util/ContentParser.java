@@ -46,12 +46,12 @@ public class ContentParser {
     }
 
     /**
-     * Get id of object
+     * Get type of object
      *
-     * @return String id
+     * @return String type
      */
     public String getID() {
-        return getCustomNode("id");
+        return getCustomNode("type");
     }
 
     /**

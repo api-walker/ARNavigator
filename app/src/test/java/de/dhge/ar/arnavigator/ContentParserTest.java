@@ -12,8 +12,8 @@ import static org.junit.Assert.*;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class ContentParserTest {
-    private final String specXML = "<?xml version=\"1.0\"?><QRContent><Meta><type>ROOM</type><name>Labor</name><id>1</id><content><![CDATA[<b>Bold</b>]]></content></Meta></QRContent>";
-    private final String specXMLWithRawContent = "<?xml version=\"1.0\"?><QRContent><Meta><type>ROOM</type><name>Labor</name><id>1</id><content raw=\"true\"><![CDATA[<b>Bold</b>]]></content></Meta></QRContent>";
+    private final String specXML = "<?xml version=\"1.0\"?><QRContent><Meta><type>ROOM</type><name>Labor</name><type>1</type><content><![CDATA[<b>Bold</b>]]></content></Meta></QRContent>";
+    private final String specXMLWithRawContent = "<?xml version=\"1.0\"?><QRContent><Meta><type>ROOM</type><name>Labor</name><type>1</type><content raw=\"true\"><![CDATA[<b>Bold</b>]]></content></Meta></QRContent>";
 
     @Test
     public void getType() throws Exception {

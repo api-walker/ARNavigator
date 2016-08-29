@@ -29,6 +29,7 @@ import android.widget.TextView;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -36,6 +37,8 @@ import de.dhge.ar.arnavigator.R;
 import de.dhge.ar.arnavigator.util.ContentParser;
 import de.dhge.ar.arnavigator.util.ContentType;
 import de.dhge.ar.arnavigator.util.HTMLFormatter;
+import de.dhge.ar.arnavigator.util.ScanResult;
+import de.dhge.ar.arnavigator.util.TinyDB;
 import me.dm7.barcodescanner.zbar.Result;
 import me.dm7.barcodescanner.zbar.ZBarScannerView;
 
@@ -58,12 +61,17 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     // Context
     private AppCompatActivity context = this;
 
+    // DB
+    private TinyDB db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
         getPermissions();
+
+        initializeDB();
 
         // Assign View IDs and general setup
         initializeViews();
@@ -117,7 +125,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_history) {
-            Intent historyIntent = new Intent(this, HistoryActivity.class);
+            Intent historyIntent = new Intent(this, ScanResultListActivity.class);
             startActivity(historyIntent);
         }
 
@@ -195,8 +203,11 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
 
     private void viewARContent() {
         ContentParser cp = null;
+        String content = "";
+
         try {
             cp = new ContentParser(result);
+            content = cp.getContent();
 
             // Set header
             switch (cp.getType()) {
@@ -219,29 +230,25 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
             switch (cp.getType()) {
                 case ContentType.ROOM:
                     // Set webView
-                    String roomContent = cp.getContent();
-
                     if (cp.isRawContent()) {
-                        roomContent = new HTMLFormatter(roomContent).prettyPrint("white", "none", "20pt", "");
+                        content = new HTMLFormatter(content).prettyPrint("white", "none", "20pt", "");
                     }
-                    webView.loadData(roomContent, "text/html", null);
+                    webView.loadData(content, "text/html", null);
                     break;
                 case ContentType.MEDIA:
-                    String mediaContent = cp.getContent();
-
                     if (cp.isRawContent()) {
-                        mediaContent = new HTMLFormatter(mediaContent).getWebSite();
+                        content = new HTMLFormatter(content).getWebSite();
                     }
                     // Set webView
                     showARWebViewProgressbar(true);
-                    webView.loadData(mediaContent, "text/html", null);
+                    webView.loadData(content, "text/html", null);
                     break;
                 case ContentType.MAP:
                     arTypeIcon.setImageResource(R.drawable.ic_map);
                     break;
                 case ContentType.ONLINE_TARGET:
                     showARWebViewProgressbar(true);
-                    webView.loadUrl(cp.getContent());
+                    webView.loadUrl(content);
                     break;
                 case ContentType.EXIT:
                     arTypeIcon.setImageResource(R.drawable.ic_exit);
@@ -261,6 +268,11 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
         } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         }
+
+        // Save scanned object
+        List<ScanResult> savedEntries = ScanResult.getAll(db);
+        savedEntries.add(new ScanResult(cp.getType(), cp.getName(), content));
+        ScanResult.saveScanResults(db, savedEntries);
 
         toggleARContent(true);
 
@@ -303,6 +315,11 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     }
 
     // Setup
+    private void initializeDB() {
+        // setup Toolbar
+        db = new TinyDB(context);
+    }
+
     private void initializeViews() {
         // setup Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
