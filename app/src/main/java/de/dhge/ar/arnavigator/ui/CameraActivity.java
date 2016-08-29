@@ -128,6 +128,10 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
             Intent historyIntent = new Intent(this, ScanResultListActivity.class);
             startActivity(historyIntent);
         }
+        else if(id == R.id.action_exit) {
+            // Close the camera app
+            CameraActivity.this.finish();
+        }
 
         return super.onOptionsItemSelected(item);
     }

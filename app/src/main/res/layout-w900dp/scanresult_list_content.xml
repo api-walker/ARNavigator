@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/activity_vertical_margin">
+
+    <ImageView
+        android:id="@+id/scanresult_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/ar_icon_margin"
+        android:layout_marginRight="@dimen/ar_icon_margin"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/ic_room" />
+
+    <TextView
+        android:id="@+id/scanresult_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/scanresult_type"
+        android:layout_toRightOf="@+id/scanresult_type"
+        android:gravity="center"
+        android:text="World's Best Magician 12345678"
+        android:textSize="@dimen/subheader_text_size" />
+</RelativeLayout>
+
+

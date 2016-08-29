@@ -23,7 +23,24 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.NavigationActivity" />
-        <activity android:name=".ui.HistoryActivity"></activity>
+        <activity
+            android:name=".ui.ScanResultListActivity"
+            android:label="@string/title_scanresult_list"
+            android:parentActivityName=".ui.CameraActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.dhge.ar.arnavigator.ui.CameraActivity" />
+        </activity>
+        <activity
+            android:name=".ui.ScanResultDetailActivity"
+            android:label="@string/title_scanresult_detail"
+            android:parentActivityName=".ui.ScanResultListActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.dhge.ar.arnavigator.ui.ScanResultListActivity" />
+        </activity>
     </application>
 
 </manifest>

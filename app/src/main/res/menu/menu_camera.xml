@@ -4,7 +4,12 @@
     tools:context="de.dhge.ar.arnavigator.ui.CameraActivity">
     <item
         android:id="@+id/action_history"
-        android:orderInCategory="101"
+        android:orderInCategory="100"
         android:title="@string/action_history"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_exit"
+        android:orderInCategory="102"
+        android:title="@string/exit"
         app:showAsAction="never" />
 </menu>

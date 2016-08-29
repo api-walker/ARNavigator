@@ -4,6 +4,8 @@
     <string name="camera_permission">Permission for the camera</string>
     <string name="camera_permission_denied">Sorry, the camera is needed for this app to run correctly!</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_scanresult_list">ScanResults</string>
+    <string name="title_scanresult_detail">ScanResult Detail</string>
+    <string name="loading">loading</string>
+    <string name="exit">Exit</string>
 </resources>
