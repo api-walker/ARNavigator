@@ -106,19 +106,13 @@ public class ScanResultDetailFragment extends Fragment {
 
     // Initialize WebView
     private void setupWebView() {
-        webView.setBackgroundColor(Color.GREEN);
+        webView.setBackgroundColor(Color.TRANSPARENT);
         webView.setWebViewClient(new WebViewClient() {
 
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 if (webView.getProgress() == 100) {
-                    new Handler().post(new Runnable() {
-                        @Override
-                        public void run() {
-                            setTitle(activity, itemName);
-                        }
-                    });
-
+                    if(!url.equals("about:blank")) setTitle(activity, itemName);
                 }
             }
         });
