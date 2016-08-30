@@ -7,18 +7,18 @@
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
     </FrameLayout>
 
     <ImageView
+        android:id="@+id/iv_flash"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_flash"
-        android:id="@+id/iv_flash"
-        android:paddingTop="@dimen/flash_icon_vertical_margin"
-        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:scaleType="centerCrop" />
+        android:layout_alignParentTop="true"
+        android:paddingTop="@dimen/flash_icon_vertical_margin"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/ic_flash" />
 
 </RelativeLayout>

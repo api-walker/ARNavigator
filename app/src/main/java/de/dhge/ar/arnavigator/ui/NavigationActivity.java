@@ -50,7 +50,7 @@ public class NavigationActivity extends AppCompatActivity {
         Intent scannerIntent = getIntent();
 
         // Set flash if was enabled
-        mNavigationView.setFlash(scannerIntent.getBooleanExtra("flash_enabled", false));
+        mNavigationView.setFlash(scannerIntent.getBooleanExtra(CameraActivity.FLASH_ENABLED, false));
     }
 
     private void setListeners() {

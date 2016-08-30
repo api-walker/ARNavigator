@@ -23,9 +23,19 @@
 
     <FrameLayout
         android:id="@+id/scanresult_detail_container"
-        android:background="@color/webview_background"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="3" />
+        android:layout_weight="3"
+        android:background="@color/webview_background" >
+
+        <TextView
+            android:text="@string/select_scan"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="@color/ar_object_text"
+            android:textSize="@dimen/big_text"
+            android:id="@+id/tv_select_scan" />
+    </FrameLayout>
 
 </LinearLayout>

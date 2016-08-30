@@ -3,8 +3,6 @@ package de.dhge.ar.arnavigator.ui;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -12,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import de.dhge.ar.arnavigator.R;
 import de.dhge.ar.arnavigator.util.ContentType;
@@ -56,6 +54,11 @@ public class ScanResultDetailFragment extends Fragment {
             itemContent = getArguments().getString(SCAN_CONTENT);
 
             setTitle(activity, String.format("%s %s...", itemName, getString(R.string.loading)));
+        }
+
+        TextView selectScan = (TextView) activity.findViewById(R.id.tv_select_scan);
+        if(selectScan != null) {
+            selectScan.setVisibility(View.GONE);
         }
     }
 
@@ -112,7 +115,7 @@ public class ScanResultDetailFragment extends Fragment {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 if (webView.getProgress() == 100) {
-                    if(!url.equals("about:blank")) setTitle(activity, itemName);
+                    if (!url.equals("about:blank")) setTitle(activity, itemName);
                 }
             }
         });

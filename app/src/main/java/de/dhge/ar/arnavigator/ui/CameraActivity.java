@@ -46,6 +46,9 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     // Permission constants
     private final int PERMISSION_CAMERA = 1;
 
+    // Identifier
+    static final String FLASH_ENABLED = "flash_enabled";
+
     // Views
     private ZBarScannerView mScannerView;
     private LinearLayout arPopupMenu;
@@ -63,6 +66,9 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
 
     // DB
     private TinyDB db;
+
+    // Flags
+    private boolean flashEnabled = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +105,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putBoolean(FLASH_ENABLED, flashEnabled);
         // Prevent webView video playback
         resetWebView();
     }
@@ -107,6 +114,8 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         webView.restoreState(savedInstanceState);
+        flashEnabled = savedInstanceState.getBoolean(FLASH_ENABLED);
+        mScannerView.setFlash(flashEnabled);
     }
 
     @Override
@@ -127,8 +136,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
         if (id == R.id.action_history) {
             Intent historyIntent = new Intent(this, ScanResultListActivity.class);
             startActivity(historyIntent);
-        }
-        else if(id == R.id.action_exit) {
+        } else if (id == R.id.action_exit) {
             // Close the camera app
             CameraActivity.this.finish();
         }
@@ -360,9 +368,11 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
         routeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                toggleARContent(false);
+
                 Intent navIntent = new Intent(context, NavigationActivity.class);
                 // Transmit flash state
-                navIntent.putExtra("flash_enabled", mScannerView.getFlash());
+                navIntent.putExtra(FLASH_ENABLED, mScannerView.getFlash());
                 startActivity(navIntent);
             }
         });
@@ -372,6 +382,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
             @Override
             public void onClick(View view) {
                 mScannerView.toggleFlash();
+                flashEnabled = !flashEnabled;
             }
         });
     }

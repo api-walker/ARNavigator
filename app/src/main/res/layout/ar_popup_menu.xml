@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:paddingTop="@dimen/ar_popup_vertical_margin"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingTop="@dimen/ar_popup_vertical_margin">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -22,15 +22,15 @@
 
             android:layout_marginLeft="@dimen/ar_icon_margin"
             android:layout_marginRight="@dimen/ar_icon_margin"
+            android:gravity="center"
+            android:maxWidth="@dimen/ar_object_name_max_width"
             android:shadowColor="@color/ar_object_text_shadow"
             android:shadowDx="1"
             android:shadowDy="1"
             android:shadowRadius="2"
             android:text="World's Best Magician 12345678"
             android:textColor="@color/ar_object_text"
-            android:gravity="center"
-            android:textSize="@dimen/big_text"
-            android:maxWidth="@dimen/ar_object_name_max_width" />
+            android:textSize="@dimen/big_text" />
 
         <ImageView
             android:id="@+id/img_ar_type"

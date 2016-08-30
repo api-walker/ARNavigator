@@ -8,4 +8,5 @@
     <string name="title_scanresult_detail">ScanResult Detail loading...</string>
     <string name="loading">loading</string>
     <string name="exit">Exit</string>
+    <string name="select_scan">Select scan...</string>
 </resources>

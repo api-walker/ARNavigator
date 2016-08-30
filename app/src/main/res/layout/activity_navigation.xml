@@ -10,11 +10,11 @@
         android:layout_height="match_parent" />
 
     <ImageView
+        android:id="@+id/iv_nav_flash"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_flash"
-        android:id="@+id/iv_nav_flash"
-        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:scaleType="centerCrop" />
+        android:layout_alignParentTop="true"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/ic_flash" />
 </RelativeLayout>
