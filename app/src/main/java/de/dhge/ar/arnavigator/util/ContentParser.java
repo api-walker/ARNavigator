@@ -17,14 +17,18 @@ public class ContentParser {
     private Document doc;
     private Element metaNode;
 
-    public ContentParser(String qrCodeContent) throws ParserConfigurationException, IOException, SAXException {
+    public ContentParser(String qrCodeContent) throws ParserConfigurationException, IOException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         ByteArrayInputStream input = new ByteArrayInputStream(qrCodeContent.getBytes("UTF-8"));
-        this.doc = dBuilder.parse(input);
-        doc.getDocumentElement().normalize();
 
-        metaNode = (Element) doc.getElementsByTagName("Meta").item(0);
+        try {
+            this.doc = dBuilder.parse(input);
+            doc.getDocumentElement().normalize();
+            metaNode = (Element) doc.getElementsByTagName("Meta").item(0);
+        } catch (SAXException e) {
+           // Invalid content
+        }
     }
 
     /**
@@ -62,6 +66,15 @@ public class ContentParser {
     public boolean isRawContent() {
         Node attr = metaNode.getElementsByTagName("content").item(0).getAttributes().getNamedItem("raw");
         return attr != null && attr.getNodeValue().equals("true");
+    }
+
+    /**
+     * Check if QR-Code is with ARNavigator content
+     *
+     * @return Boolean isValid
+     */
+    public boolean isValidContent() {
+        return (metaNode != null);
     }
 
     /**
