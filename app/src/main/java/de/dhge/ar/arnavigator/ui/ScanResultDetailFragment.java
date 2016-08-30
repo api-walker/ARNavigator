@@ -96,6 +96,7 @@ public class ScanResultDetailFragment extends Fragment {
         resetWebView();
     }
 
+    // Sets title of toolbar
     private void setTitle(Activity activity, String text) {
         Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -103,6 +104,7 @@ public class ScanResultDetailFragment extends Fragment {
         }
     }
 
+    // Initialize WebView
     private void setupWebView() {
         webView.setBackgroundColor(Color.GREEN);
         webView.setWebViewClient(new WebViewClient() {
