@@ -80,6 +80,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     // Flags
     private boolean flashEnabled = false;
     private boolean arShow = false;
+    private boolean webContentFound = false;
 
     // AR Object
     private String objectID;
@@ -209,14 +210,16 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     protected Dialog onCreateDialog(int id) {
         switch (id) {
             case PROGRESSBAR:
-                webcontentDownloadDialog = new ProgressDialog(this);
-                webcontentDownloadDialog.setMessage(getString(R.string.downloading_webcontent));
-                webcontentDownloadDialog.setIndeterminate(false);
-                webcontentDownloadDialog.setMax(100);
-                webcontentDownloadDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                webcontentDownloadDialog.setCancelable(true);
-                webcontentDownloadDialog.show();
-                return webcontentDownloadDialog;
+                if(webContentFound) {
+                    webcontentDownloadDialog = new ProgressDialog(this);
+                    webcontentDownloadDialog.setMessage(getString(R.string.downloading_webcontent));
+                    webcontentDownloadDialog.setIndeterminate(false);
+                    webcontentDownloadDialog.setMax(100);
+                    webcontentDownloadDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                    webcontentDownloadDialog.setCancelable(true);
+                    webcontentDownloadDialog.show();
+                    return webcontentDownloadDialog;
+                }
             default:
                 return null;
         }
@@ -301,6 +304,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
                         break;
                     case ContentType.WEB_CONTENT:
                         showContentDirect = false;
+                        webContentFound = true;
                         // Download online xml file
                         new WebContentDownloader().execute(content);
                         break;
@@ -560,6 +564,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
         protected void onPostExecute(String file_url) {
             // dismiss the dialog after the file was downloaded
             dismissDialog(PROGRESSBAR);
+            webContentFound = false;
             viewARContent();
         }
     }
