@@ -4,6 +4,6 @@
       <type>ROOM</type>
       <name>Labor</name>
       <id>1</id>
-      <content><![CDATA[<html><head><style type="text/css"></style></head><body style="text-align:center;color:"><p style="color: white;background-color: rgba(0,0,0,0.3);">You scored <b>192</b> points.</p></body></html>]]></content>
+      <content><![CDATA[<html><head><style type="text/css"></style></head><body style="text-align:center;"><p style="color: white;background-color: rgba(0,0,0,0.1);color: black;"><a href="tel:+492331555555" style=" color: white;"><b>Call me!</b></a></p><p style="color: white;background-color: rgba(0,0,0,0.1);color: black;"><a href="mailto:test@test.com" style=" color: white;"><b>Email me!</b></a></p></body></html>]]></content>
    </Meta>
 </QRContent> 
