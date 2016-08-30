@@ -31,15 +31,18 @@ class ContentCreatorWindow < FXMainWindow
     #Add name
     FXLabel.new(vertical_frame, "Name:")
     @txt_name = FXTextField.new(vertical_frame, 30, :opts => FRAME_SUNKEN|FRAME_THICK|LAYOUT_FILL_X)
+    @txt_name.text = "Labor"
 
     #Add ID
     FXLabel.new(vertical_frame, "ID:")
     @txt_id = FXTextField.new(vertical_frame, 30, :opts => FRAME_SUNKEN|FRAME_THICK|LAYOUT_FILL_X)
+    @txt_id.text = "1"
 
     #Add content
     FXLabel.new(vertical_frame, "Content:")
     @cb_raw = FXCheckButton.new(vertical_frame, "Is raw content?")
     @txt_content = FXText.new(vertical_frame, nil, 0, :opts => FRAME_SUNKEN|FRAME_THICK|LAYOUT_FILL)
+    @txt_content.text = "Content"
 
     #Add save button
     @btn_save = FXButton.new(vertical_frame, "Save as XML")
