@@ -291,9 +291,12 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
         if (viewState) {
             arPopupMenu.setVisibility(View.VISIBLE);
             routeButton.setVisibility(View.VISIBLE);
+            // hide flash button on popup
+            flashButton.setVisibility(View.GONE);
         } else {
             arPopupMenu.setVisibility(View.GONE);
             routeButton.setVisibility(View.GONE);
+            flashButton.setVisibility(View.VISIBLE);
             showARWebViewProgressbar(viewState);
             resetWebView();
         }
