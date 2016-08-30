@@ -5,7 +5,7 @@
     <string name="camera_permission">Kamera-Berechtigung</string>
     <string name="camera_permission_denied">Diese App muss auf die Kamera zwingend zugreifen und benötigt daher unbedingt die Berechtigung!</string>
     <string name="title_scanresult_list">Scan-Historie</string>
-    <string name="title_scanresult_detail">Scan-Inhalt</string>
+    <string name="title_scanresult_detail">Scan-Inhalt lädt...</string>
     <string name="loading">lädt</string>
     <string name="exit">Beenden</string>
 </resources>

@@ -5,4 +5,5 @@
     <color name="colorAccent">#D50000</color>
     <color name="ar_object_text">#FFFFFF</color>
     <color name="ar_object_text_shadow">#424242</color>
+    <color name="webview_background">#66000000</color>
 </resources>

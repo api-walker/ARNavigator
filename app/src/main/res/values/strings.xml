@@ -5,7 +5,7 @@
     <string name="camera_permission_denied">Sorry, the camera is needed for this app to run correctly!</string>
 
     <string name="title_scanresult_list">ScanResults</string>
-    <string name="title_scanresult_detail">ScanResult Detail</string>
+    <string name="title_scanresult_detail">ScanResult Detail loading...</string>
     <string name="loading">loading</string>
     <string name="exit">Exit</string>
 </resources>
