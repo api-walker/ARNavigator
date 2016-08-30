@@ -51,7 +51,7 @@ public class ContentParser {
      * @return String type
      */
     public String getID() {
-        return getCustomNode("type");
+        return getCustomNode("id");
     }
 
     /**
