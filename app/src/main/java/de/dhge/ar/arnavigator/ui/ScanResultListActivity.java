@@ -21,6 +21,8 @@ import de.dhge.ar.arnavigator.util.ContentType;
 import de.dhge.ar.arnavigator.util.ScanResult;
 import de.dhge.ar.arnavigator.util.TinyDB;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -78,7 +80,11 @@ public class ScanResultListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(ScanResult.getAll(new TinyDB(this))));
+        List<ScanResult> scans = ScanResult.getAll(new TinyDB(this));
+        ArrayList<ScanResult> mostRecentScans = new ArrayList<>(scans);
+        // Order to most recent
+        Collections.reverse(mostRecentScans);
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(mostRecentScans));
     }
 
     public class SimpleItemRecyclerViewAdapter
