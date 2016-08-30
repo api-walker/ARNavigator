@@ -1,1 +1,1 @@
-Android Studio version: 2.2 BETA
+Android Studio version: 2.1.3
