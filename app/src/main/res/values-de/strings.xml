@@ -9,4 +9,7 @@
     <string name="loading">lädt</string>
     <string name="exit">Beenden</string>
     <string name="select_scan">Scan auswählen...</string>
+    <string name="downloading_webcontent">Webinhalt wird heruntergeladen...</string>
+    <string name="invalid_qr_code_title">Ungültiger QR-Code</string>
+    <string name="invalid_qr_code_text">Es können nur ARNavigator QR-Codes verwendet werden!</string>
 </resources>

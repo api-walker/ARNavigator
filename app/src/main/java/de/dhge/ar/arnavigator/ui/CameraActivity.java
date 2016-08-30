@@ -1,13 +1,17 @@
 package de.dhge.ar.arnavigator.ui;
 
 import android.Manifest;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.os.Vibrator;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -26,9 +30,13 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.xml.sax.SAXException;
-
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -50,6 +58,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     static final String FLASH_ENABLED = "flash_enabled";
     static final String OBJECT_ID = "object_id";
     static final String OBJECT_NAME = "object_name";
+    private final int PROGRESSBAR = 100;
 
     // Views
     private ZBarScannerView mScannerView;
@@ -60,8 +69,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     private TextView identifierLabel;
     private ImageView arTypeIcon;
     private ProgressBar arLoadUrlProgressBar;
-    private String result;
-    private boolean arShow = false;
+    private ProgressDialog webcontentDownloadDialog;
 
     // Context
     private AppCompatActivity context = this;
@@ -71,10 +79,12 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
 
     // Flags
     private boolean flashEnabled = false;
+    private boolean arShow = false;
 
     // AR Object
     private String objectID;
     private String objectName;
+    private String result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +92,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
         setContentView(R.layout.activity_camera);
 
         getPermissions();
+        initializePolicies();
 
         initializeDB();
 
@@ -140,6 +151,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_history) {
+            toggleARContent(false);
             Intent historyIntent = new Intent(this, ScanResultListActivity.class);
             startActivity(historyIntent);
         } else if (id == R.id.action_exit) {
@@ -194,6 +206,23 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     }
 
     @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case PROGRESSBAR:
+                webcontentDownloadDialog = new ProgressDialog(this);
+                webcontentDownloadDialog.setMessage(getString(R.string.downloading_webcontent));
+                webcontentDownloadDialog.setIndeterminate(false);
+                webcontentDownloadDialog.setMax(100);
+                webcontentDownloadDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                webcontentDownloadDialog.setCancelable(true);
+                webcontentDownloadDialog.show();
+                return webcontentDownloadDialog;
+            default:
+                return null;
+        }
+    }
+
+    @Override
     public void handleResult(Result rawResult) {
         // Only allow QR Codes
         if (rawResult.getBarcodeFormat().getName().equals("QRCODE")) {
@@ -222,84 +251,115 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     private void viewARContent() {
         ContentParser cp = null;
         String content = "";
+        boolean showContentDirect = true;
 
         try {
             cp = new ContentParser(result);
-            content = cp.getContent();
 
-            objectID = cp.getID();
-            objectName = cp.getName();
+            if (cp.isValidContent()) {
+                content = cp.getContent();
+                // Set intent information
+                objectID = cp.getID();
+                objectName = cp.getName();
 
-            // Set header
-            switch (cp.getType()) {
-                case ContentType.ROOM:
-                    arTypeIcon.setImageResource(R.drawable.ic_room);
-                    break;
-                case ContentType.MEDIA:
-                    arTypeIcon.setImageResource(R.drawable.ic_media);
-                    break;
-                case ContentType.MAP:
-                    arTypeIcon.setImageResource(R.drawable.ic_map);
-                    break;
-                case ContentType.ONLINE_TARGET:
-                    arTypeIcon.setImageResource(R.drawable.ic_online_target);
-                    break;
+                // Set header
+                switch (cp.getType()) {
+                    case ContentType.ROOM:
+                        arTypeIcon.setImageResource(R.drawable.ic_room);
+                        break;
+                    case ContentType.MEDIA:
+                        arTypeIcon.setImageResource(R.drawable.ic_media);
+                        break;
+                    case ContentType.MAP:
+                        arTypeIcon.setImageResource(R.drawable.ic_map);
+                        break;
+                    case ContentType.ONLINE_TARGET:
+                        arTypeIcon.setImageResource(R.drawable.ic_online_target);
+                        break;
+                }
+                identifierLabel.setText(cp.getName());
+
+                // Handle types
+                switch (cp.getType()) {
+                    case ContentType.ROOM:
+                        // Set webView
+                        if (cp.isRawContent()) {
+                            content = new HTMLFormatter(content).prettyPrint("white", "none", "20pt", "");
+                        }
+                        webView.loadData(content, "text/html", null);
+                        break;
+                    case ContentType.MEDIA:
+                        if (cp.isRawContent()) {
+                            content = new HTMLFormatter(content).getWebSite();
+                        }
+                        // Set webView
+                        showARWebViewProgressbar(true);
+                        webView.loadData(content, "text/html", null);
+                        break;
+                    case ContentType.MAP:
+                        arTypeIcon.setImageResource(R.drawable.ic_map);
+                        break;
+                    case ContentType.WEB_CONTENT:
+                        showContentDirect = false;
+                        // Download online xml file
+                        new WebContentDownloader().execute(content);
+                        break;
+                    case ContentType.ONLINE_TARGET:
+                        showARWebViewProgressbar(true);
+                        webView.loadUrl(content);
+                        break;
+                    case ContentType.EXIT:
+                        arTypeIcon.setImageResource(R.drawable.ic_exit);
+                        break;
+                    case ContentType.STAIRS_UP:
+                        // Currently not used
+                        break;
+                    case ContentType.STAIRS_DOWN:
+                        // Currently not used
+                        break;
+                    case ContentType.ADJUSTMENT_POINT:
+                        // Currently not used
+                        break;
+                }
+
+                if (showContentDirect) {
+                    // Save scanned object
+                    List<ScanResult> savedEntries = ScanResult.getAll(db);
+                    savedEntries.add(new ScanResult(cp.getType(), cp.getName(), content));
+                    ScanResult.saveScanResults(db, savedEntries);
+
+                    toggleARContent(true);
+
+                    // Make user aware of result
+                    // vibration for 200 milliseconds
+                    ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(200);
+                }
             }
-            identifierLabel.setText(cp.getName());
+            else {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        this);
+                // set title
+                alertDialogBuilder.setTitle(getString(R.string.invalid_qr_code_title));
 
-            // Handle types
-            switch (cp.getType()) {
-                case ContentType.ROOM:
-                    // Set webView
-                    if (cp.isRawContent()) {
-                        content = new HTMLFormatter(content).prettyPrint("white", "none", "20pt", "");
-                    }
-                    webView.loadData(content, "text/html", null);
-                    break;
-                case ContentType.MEDIA:
-                    if (cp.isRawContent()) {
-                        content = new HTMLFormatter(content).getWebSite();
-                    }
-                    // Set webView
-                    showARWebViewProgressbar(true);
-                    webView.loadData(content, "text/html", null);
-                    break;
-                case ContentType.MAP:
-                    arTypeIcon.setImageResource(R.drawable.ic_map);
-                    break;
-                case ContentType.ONLINE_TARGET:
-                    showARWebViewProgressbar(true);
-                    webView.loadUrl(content);
-                    break;
-                case ContentType.EXIT:
-                    arTypeIcon.setImageResource(R.drawable.ic_exit);
-                    break;
-                case ContentType.STAIRS_UP:
-                    // Currently not used
-                    break;
-                case ContentType.STAIRS_DOWN:
-                    // Currently not used
-                    break;
-                case ContentType.ADJUSTMENT_POINT:
-                    // Currently not used
-                    break;
+                // set dialog message
+                alertDialogBuilder
+                        .setMessage(getString(R.string.invalid_qr_code_text))
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                restartCamera();
+                            }
+                        });
+
+                // create alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                // show it
+                alertDialog.show();
             }
-
-
-        } catch (ParserConfigurationException | SAXException | IOException e) {
+        } catch (ParserConfigurationException | IOException e) {
             e.printStackTrace();
         }
-
-        // Save scanned object
-        List<ScanResult> savedEntries = ScanResult.getAll(db);
-        savedEntries.add(new ScanResult(cp.getType(), cp.getName(), content));
-        ScanResult.saveScanResults(db, savedEntries);
-
-        toggleARContent(true);
-
-        // Make user aware of result
-        // vibration for 200 milliseconds
-        ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(200);
     }
 
     private void toggleARContent(boolean viewState) {
@@ -342,6 +402,11 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     private void initializeDB() {
         // setup Toolbar
         db = new TinyDB(context);
+    }
+
+    private void initializePolicies() {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
     }
 
     private void initializeViews() {
@@ -417,5 +482,85 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
         });
         // webView.setWebViewClient(new WebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);
+    }
+
+    // Appendix
+    // Download xml from web
+    class WebContentDownloader extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showDialog(PROGRESSBAR);
+        }
+
+        /**
+         * Downloading file in background thread
+         */
+        @Override
+        protected String doInBackground(String... webcontent_url) {
+            int count;
+            try {
+                URL url = new URL(webcontent_url[0]);
+                URLConnection conection = url.openConnection();
+                conection.connect();
+
+                // this will be useful so that you can show a tipical 0-100%
+                // progress bar
+                int lenghtOfFile = conection.getContentLength();
+
+                // download the file
+                InputStream input = new BufferedInputStream(url.openStream(),
+                        8192);
+
+                // Output stream
+                OutputStream output = new ByteArrayOutputStream();
+
+                byte data[] = new byte[1024];
+
+                long total = 0;
+
+                while ((count = input.read(data)) != -1) {
+                    total += count;
+                    // publishing the progress....
+                    // After this onProgressUpdate will be called
+                    publishProgress("" + (int) ((total * 100) / lenghtOfFile));
+
+                    // writing data to file
+                    output.write(data, 0, count);
+                }
+
+                // flushing output
+                output.flush();
+                result = output.toString();
+
+                // closing streams
+                output.close();
+                input.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        /**
+         * Updating progress bar
+         */
+
+        protected void onProgressUpdate(String... progress) {
+            // setting progress percentage
+            webcontentDownloadDialog.setProgress(Integer.parseInt(progress[0]));
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        @Override
+        protected void onPostExecute(String file_url) {
+            // dismiss the dialog after the file was downloaded
+            dismissDialog(PROGRESSBAR);
+            viewARContent();
+        }
     }
 }
