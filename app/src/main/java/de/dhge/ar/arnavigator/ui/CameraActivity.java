@@ -48,6 +48,8 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
 
     // Identifier
     static final String FLASH_ENABLED = "flash_enabled";
+    static final String OBJECT_ID = "object_id";
+    static final String OBJECT_NAME = "object_name";
 
     // Views
     private ZBarScannerView mScannerView;
@@ -69,6 +71,10 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
 
     // Flags
     private boolean flashEnabled = false;
+
+    // AR Object
+    private String objectID;
+    private String objectName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,6 +226,9 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
         try {
             cp = new ContentParser(result);
             content = cp.getContent();
+
+            objectID = cp.getID();
+            objectName = cp.getName();
 
             // Set header
             switch (cp.getType()) {
@@ -373,6 +382,10 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
                 Intent navIntent = new Intent(context, NavigationActivity.class);
                 // Transmit flash state
                 navIntent.putExtra(FLASH_ENABLED, mScannerView.getFlash());
+                // Object details
+                navIntent.putExtra(OBJECT_ID, objectID);
+                navIntent.putExtra(OBJECT_NAME, objectName);
+
                 startActivity(navIntent);
             }
         });

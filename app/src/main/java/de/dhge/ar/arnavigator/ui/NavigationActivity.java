@@ -14,6 +14,10 @@ public class NavigationActivity extends AppCompatActivity {
     private NavigationView mNavigationView;
     private ImageView flashButton;
 
+    // AR Object
+    private String objectID;
+    private String objectName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +55,9 @@ public class NavigationActivity extends AppCompatActivity {
 
         // Set flash if was enabled
         mNavigationView.setFlash(scannerIntent.getBooleanExtra(CameraActivity.FLASH_ENABLED, false));
+
+        objectID = scannerIntent.getStringExtra(CameraActivity.OBJECT_ID);
+        objectName = scannerIntent.getStringExtra(CameraActivity.OBJECT_NAME);
     }
 
     private void setListeners() {
