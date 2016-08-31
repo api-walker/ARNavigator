@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -81,6 +82,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     private boolean flashEnabled = false;
     private boolean arShow = false;
     private boolean webContentFound = false;
+    private boolean showURLIntent = false;
 
     // AR Object
     private String objectID;
@@ -124,8 +126,13 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(FLASH_ENABLED, flashEnabled);
-        // Prevent webView video playback
-        resetWebView();
+
+        if (!showURLIntent) {
+            // Prevent webView video playback
+            toggleARContent(false);
+        } else {
+            showURLIntent = false;
+        }
     }
 
     @Override
@@ -210,7 +217,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     protected Dialog onCreateDialog(int id) {
         switch (id) {
             case PROGRESSBAR:
-                if(webContentFound) {
+                if (webContentFound) {
                     webcontentDownloadDialog = new ProgressDialog(this);
                     webcontentDownloadDialog.setMessage(getString(R.string.downloading_webcontent));
                     webcontentDownloadDialog.setIndeterminate(false);
@@ -338,8 +345,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
                     // vibration for 200 milliseconds
                     ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(200);
                 }
-            }
-            else {
+            } else {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                         this);
                 // set title
@@ -482,6 +488,22 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
                 if (webView.getProgress() == 100) {
                     showARWebViewProgressbar(false);
                 }
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView wv, String url) {
+                if (url.startsWith("tel:") || url.startsWith("sms:") || url.startsWith("smsto:") || url.startsWith("mms:") || url.startsWith("mmsto:")) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(intent);
+                    showURLIntent = true;
+                    return true;
+                } else if (url.startsWith("mailto:")) {
+                    Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse(url));
+                    startActivity(intent);
+                    showURLIntent = true;
+                    return true;
+                }
+                return false;
             }
         });
         // webView.setWebViewClient(new WebViewClient());

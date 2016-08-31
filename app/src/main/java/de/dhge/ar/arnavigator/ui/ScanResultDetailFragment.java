@@ -1,7 +1,9 @@
 package de.dhge.ar.arnavigator.ui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
@@ -35,6 +37,9 @@ public class ScanResultDetailFragment extends Fragment {
     // Views
     private WebView webView;
     private Activity activity;
+
+    // Flags
+    private boolean showURLIntent = false;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -88,8 +93,11 @@ public class ScanResultDetailFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        // Prevent webView video playback
-        resetWebView();
+        if(!showURLIntent)
+        {
+            // Prevent webView video playback
+            resetWebView();
+        }
     }
 
     @Override
@@ -117,6 +125,23 @@ public class ScanResultDetailFragment extends Fragment {
                 if (webView.getProgress() == 100) {
                     if (!url.equals("about:blank")) setTitle(activity, itemName);
                 }
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView wv, String url) {
+                if (url.startsWith("tel:") || url.startsWith("sms:") || url.startsWith("smsto:") || url.startsWith("mms:") || url.startsWith("mmsto:")) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(intent);
+                    showURLIntent = true;
+                    return true;
+                }
+                else if(url.startsWith("mailto:")){
+                    Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse(url));
+                    startActivity(intent);
+                    showURLIntent = true;
+                    return true;
+                }
+                return false;
             }
         });
 
