@@ -6,9 +6,10 @@ require 'prawn/measurement_extensions'
 require 'fileutils'
 
 # Size of QR-Code
-QR_CODE_PDF_SIZE = 8.cm
+QR_CODE_PDF_SIZE_RAW = 8 #cm
+QR_CODE_PDF_SIZE = QR_CODE_PDF_SIZE_RAW.cm
 QR_CODE_PDF_LOGO = "res/arnavigator_ready_logo.png"
-QR_CODE_PDF_LOGO_HEIGHT = 2.15.cm
+QR_CODE_PDF_LOGO_HEIGHT = (QR_CODE_PDF_SIZE_RAW.to_f/4).cm + 0.15.cm
 
 # Extract working directory from cmd
 if ARGV.size == 0
