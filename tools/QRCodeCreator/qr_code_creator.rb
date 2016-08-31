@@ -37,7 +37,7 @@ if Dir.exist? dir
 
   xml_files.each_with_index do |file, i|
     # Generate QR-Code
-    qrcode = RQRCode::QRCode.new(File.read(file))
+    qrcode = RQRCode::QRCode.new(File.read(file), :level => :m)
     original_xml_file = File.basename(file)
 
     new_png_path = File.join(qr_code_folder, "qr_#{File.basename(file, File.extname(file))}.png")
