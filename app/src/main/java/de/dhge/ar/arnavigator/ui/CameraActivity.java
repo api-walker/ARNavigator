@@ -261,7 +261,6 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     private void viewARContent() {
         ContentParser cp = null;
         String content = "";
-        boolean showContentDirect = true;
 
         try {
             cp = new ContentParser(result);
@@ -292,28 +291,34 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
                 // Handle types
                 switch (cp.getType()) {
                     case ContentType.ROOM:
-                        // Set webView
-                        if (cp.isRawContent()) {
-                            content = new HTMLFormatter(content).prettyPrint("white", "none", "20pt", "");
+                        // is webcontent ?
+                        if(cp.isWebContent()) {
+                            setWebContent(content);
                         }
-                        webView.loadData(content, "text/html", null);
+                        else {
+                            // Set webView
+                            if (cp.isRawContent()) {
+                                content = new HTMLFormatter(content).prettyPrint("white", "none", "20pt", "");
+                            }
+                            webView.loadData(content, "text/html", null);
+                        }
                         break;
                     case ContentType.MEDIA:
-                        if (cp.isRawContent()) {
-                            content = new HTMLFormatter(content).getWebSite();
+                        // is webcontent ?
+                        if(cp.isWebContent()) {
+                            setWebContent(content);
                         }
-                        // Set webView
-                        showARWebViewProgressbar(true);
-                        webView.loadData(content, "text/html", null);
+                        else {
+                            if (cp.isRawContent()) {
+                                content = new HTMLFormatter(content).getWebSite();
+                            }
+                            // Set webView
+                            showARWebViewProgressbar(true);
+                            webView.loadData(content, "text/html", null);
+                        }
                         break;
                     case ContentType.MAP:
                         arTypeIcon.setImageResource(R.drawable.ic_map);
-                        break;
-                    case ContentType.WEB_CONTENT:
-                        showContentDirect = false;
-                        webContentFound = true;
-                        // Download online xml file
-                        new WebContentDownloader().execute(content);
                         break;
                     case ContentType.ONLINE_TARGET:
                         showARWebViewProgressbar(true);
@@ -333,7 +338,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
                         break;
                 }
 
-                if (showContentDirect) {
+                if (!webContentFound) {
                     // Save scanned object
                     List<ScanResult> savedEntries = ScanResult.getAll(db);
                     savedEntries.add(new ScanResult(cp.getType(), cp.getName(), content));
@@ -395,6 +400,12 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
         } else {
             arLoadUrlProgressBar.setVisibility(View.GONE);
         }
+    }
+
+    private void setWebContent(String url) {
+        webContentFound = true;
+        // Download online xml file
+        new WebContentDownloader().execute(url);
     }
 
     // Permissions

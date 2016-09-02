@@ -40,7 +40,18 @@ class ContentCreatorWindow < FXMainWindow
 
     #Add content
     FXLabel.new(vertical_frame, "Content:")
-    @cb_raw = FXCheckButton.new(vertical_frame, "Is raw content?")
+    horizontal_frame = FXHorizontalFrame.new(vertical_frame, LAYOUT_FILL_X)
+    data = FXDataTarget.new("Checkbox")
+    @cb_raw = FXRadioButton.new(horizontal_frame, "Is raw content?")
+    @cb_raw.connect(SEL_COMMAND) do
+        @cb_web_content.checkState = false
+    end
+    
+    @cb_web_content = FXRadioButton.new(horizontal_frame, "Is web content?")
+    @cb_web_content.connect(SEL_COMMAND) do
+        @cb_raw.checkState = false
+    end
+    
     @txt_content = FXText.new(vertical_frame, nil, 0, :opts => FRAME_SUNKEN|FRAME_THICK|LAYOUT_FILL)
     @txt_content.text = "Content"
 
@@ -69,7 +80,7 @@ class ContentCreatorWindow < FXMainWindow
           xml.type @type_combobox.text
           xml.name @txt_name.text
           xml.id @txt_id
-          xml.content @txt_content.text, :raw => @cb_raw.check
+          xml.content @txt_content.text, :raw => @cb_raw.check, :web_content => @cb_web_content.check
         end
       end
     }.to_xml

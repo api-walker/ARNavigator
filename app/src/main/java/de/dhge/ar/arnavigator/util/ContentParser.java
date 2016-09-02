@@ -69,6 +69,16 @@ public class ContentParser {
     }
 
     /**
+     * Get type of content of object (webcontent?)
+     *
+     * @return Boolean isWebContent
+     */
+    public boolean isWebContent() {
+        Node attr = metaNode.getElementsByTagName("content").item(0).getAttributes().getNamedItem("web_content");
+        return attr != null && attr.getNodeValue().equals("true");
+    }
+
+    /**
      * Check if QR-Code is with ARNavigator content
      *
      * @return Boolean isValid

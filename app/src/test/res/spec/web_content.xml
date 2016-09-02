@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <QRContent>
    <Meta>
-      <type>WEB_CONTENT</type>
-      <name>WEB</name>
+      <type>ROOM</type>
+      <name>WEBCONTENT Room</name>
       <id>1</id>
-      <content>https://raw.githubusercontent.com/api-walker/ARNavigator/master/app/src/test/res/spec/room_html_content.xml</content>
+      <content web_content="true">https://raw.githubusercontent.com/api-walker/ARNavigator/master/app/src/test/res/spec/room_html_content.xml</content>
    </Meta>
 </QRContent>  
