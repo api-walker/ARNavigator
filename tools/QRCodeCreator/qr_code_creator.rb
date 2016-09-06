@@ -64,4 +64,6 @@ if Dir.exist? dir
     # Set pdf state
     puts "(#{i+1}/#{files_count}) Generated PDF: #{new_pdf_path}"
   end
+else
+    puts "Folder not found!"
 end

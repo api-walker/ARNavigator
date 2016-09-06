@@ -11,6 +11,7 @@ Install dependencies:
 sudo apt install libfox-1.6-dev
 sudo apt install libxrandr-dev
 gem install fxruby
+gem install nokogiri
 ```
 
 ### Usage

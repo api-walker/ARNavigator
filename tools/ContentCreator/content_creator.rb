@@ -20,7 +20,6 @@ class ContentCreatorWindow < FXMainWindow
     @type_combobox.appendItem("ROOM")
     @type_combobox.appendItem("MAP")
     @type_combobox.appendItem("MEDIA")
-    @type_combobox.appendItem("WEB_CONTENT")
     @type_combobox.appendItem("ONLINE_TARGET")
     @type_combobox.appendItem("EXIT")
     @type_combobox.appendItem("STAIRS_UP")
