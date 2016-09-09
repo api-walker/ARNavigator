@@ -284,6 +284,8 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
                         break;
                     case ContentType.ONLINE_TARGET:
                         arTypeIcon.setImageResource(R.drawable.ic_online_target);
+                    case ContentType.EXIT:
+                        arTypeIcon.setImageResource(R.drawable.ic_exit);
                         break;
                 }
                 identifierLabel.setText(cp.getName());
@@ -318,14 +320,12 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
                         }
                         break;
                     case ContentType.MAP:
-                        arTypeIcon.setImageResource(R.drawable.ic_map);
                         break;
                     case ContentType.ONLINE_TARGET:
                         showARWebViewProgressbar(true);
                         webView.loadUrl(content);
                         break;
                     case ContentType.EXIT:
-                        arTypeIcon.setImageResource(R.drawable.ic_exit);
                         break;
                     case ContentType.STAIRS_UP:
                         // Currently not used
