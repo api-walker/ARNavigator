@@ -1,7 +1,9 @@
 package de.dhge.ar.arnavigator.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import de.dhge.ar.arnavigator.R;
 import de.dhge.ar.arnavigator.navigation.Node;
@@ -18,14 +21,20 @@ import de.dhge.ar.arnavigator.navigation.NodeGraph;
 
 public class NavigationActivity extends AppCompatActivity {
 
+    // Views
     private NavigationView mNavigationView;
     private ImageView flashButton;
+
+    // Identifier
+    final String DATA_DESTINATION = "destination";
 
     // AR Object
     private String objectID;
     private String objectName;
     private NodeGraph nodeGraph;
     private Node currentNode;
+    private String destination;
+    private List<String> objectNames;
 
     private static NavigationActivity instance;
 
@@ -36,13 +45,7 @@ public class NavigationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
-        // current hardcoded map
-        // each line has one statement either N or Node; C or Connection
-        // N ID X Y Name  -- creates a new Node with ID at (X,Y) and the specified name
-        // C ID1 ID2 Dist -- creates a new Connection from Node ID1 to Node ID2 (and vice versa) with the speficied distance
-        String definition = readMapFile(getResources().openRawResource(R.raw.dhge_map));
-        nodeGraph = new NodeGraph(definition);
-
+        initializeMapEnvironment();
         initializeViews();
         setListeners();
     }
@@ -51,6 +54,7 @@ public class NavigationActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         mNavigationView.startCamera();          // Start camera on resume
+        manageDestination();
     }
 
     @Override
@@ -59,20 +63,23 @@ public class NavigationActivity extends AppCompatActivity {
         mNavigationView.stopCamera();           // Stop camera on pause
     }
 
-    public static Object getSystemServiceHelper(String service)
-    {
-        if(instance == null)
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(DATA_DESTINATION, destination);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        destination = savedInstanceState.getString(DATA_DESTINATION);
+    }
+
+    public static Object getSystemServiceHelper(String service) {
+        if (instance == null)
             return null;
 
         return instance.getSystemService(service);
-    }
-
-    public static Node getCurrentNode()
-    {
-        if(instance == null)
-            return null;
-
-        return instance.currentNode;
     }
 
     // Setup
@@ -86,6 +93,12 @@ public class NavigationActivity extends AppCompatActivity {
         receiveIntentData();
     }
 
+    private void initializeMapEnvironment() {
+        String definition = readMapFile(getResources().openRawResource(R.raw.dhge_map));
+        nodeGraph = new NodeGraph(definition);
+        objectNames = nodeGraph.getNames();
+    }
+
     private void receiveIntentData() {
         Intent scannerIntent = getIntent();
 
@@ -95,9 +108,8 @@ public class NavigationActivity extends AppCompatActivity {
         objectID = scannerIntent.getStringExtra(CameraActivity.OBJECT_ID);
         objectName = scannerIntent.getStringExtra(CameraActivity.OBJECT_NAME);
 
-        // calculates the path using the map from start to finish (as string or id)
-        ArrayList<Node> path = nodeGraph.getPath(objectName, "Labor");
-        currentNode = path.get(0);
+        // remove start object from destination list
+        objectNames.remove(objectName);
     }
 
     private void setListeners() {
@@ -107,6 +119,47 @@ public class NavigationActivity extends AppCompatActivity {
                 mNavigationView.toggleFlash();
             }
         });
+    }
+
+    // If new activity show picker, else set arrow
+    public void manageDestination() {
+        if(destination == null) {
+            // let the user pick a destination
+            showDestinationDialog();
+        }
+        else {
+            setCurrentNode();
+        }
+    }
+
+    public void showDestinationDialog() {
+        AlertDialog.Builder destinationDialog = new AlertDialog.Builder(this);
+
+        destinationDialog.setCancelable(false);
+        destinationDialog.setTitle(R.string.title_select_destination)
+                .setItems(objectNames.toArray(new String[objectNames.size()]), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Set the selected destination and start navigation
+                        destination = objectNames.get(which);
+                        setCurrentNode();
+                    }
+                });
+
+        destinationDialog.create();
+        destinationDialog.show();
+    }
+
+    private void setCurrentNode() {
+        // calculates the path using the map from start to finish (as string or id)
+        ArrayList<Node> path = nodeGraph.getPath(objectName, destination);
+        currentNode = path.get(0);
+    }
+
+    public static Node getCurrentNode() {
+        if (instance == null)
+            return null;
+
+        return instance.currentNode;
     }
 
     // Reads map from resources
