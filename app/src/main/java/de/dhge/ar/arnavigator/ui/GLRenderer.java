@@ -65,43 +65,44 @@ public class GLRenderer implements GLSurfaceView.Renderer, SensorEventListener {
     public void onDrawFrame(GL10 unused) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
-        // set camera view
-        Matrix.setIdentityM(mViewMatrix, 0);
-        Matrix.translateM(mViewMatrix, 0, position[0], position[1], position[2] - 2);
-        Matrix.multiplyMM(mViewMatrix, 0, rotationMatrix, 0, mViewMatrix, 0);
-        float[] target = new float[]{0, -1, 0, 1};
-        float[] input = target.clone();
-        Matrix.multiplyMV(target, 0, mViewMatrix, 0, input, 0);
+        Node mCurrentNode = NavigationActivity.getCurrentNode();
+        // only draw arrow if destination is selected
+        if (mCurrentNode != null) {
+            // set camera view
+            Matrix.setIdentityM(mViewMatrix, 0);
+            Matrix.translateM(mViewMatrix, 0, position[0], position[1], position[2] - 2);
+            Matrix.multiplyMM(mViewMatrix, 0, rotationMatrix, 0, mViewMatrix, 0);
+            float[] target = new float[]{0, -1, 0, 1};
+            float[] input = target.clone();
+            Matrix.multiplyMV(target, 0, mViewMatrix, 0, input, 0);
 
-        // calculate target direction
-        float mag = (float) Math.sqrt(target[0] * target[0] + target[1] * target[1] + target[2] * target[2]);
-        if (mag != 0) {
-            target[0] /= mag;
-            target[1] /= mag;
-            target[2] /= mag;
-        } else {
-            target[0] = 0;
-            target[1] = 0;
-            target[2] = 0;
-        }
+            // calculate target direction
+            float mag = (float) Math.sqrt(target[0] * target[0] + target[1] * target[1] + target[2] * target[2]);
+            if (mag != 0) {
+                target[0] /= mag;
+                target[1] /= mag;
+                target[2] /= mag;
+            } else {
+                target[0] = 0;
+                target[1] = 0;
+                target[2] = 0;
+            }
 
-        // set arrow position
-        float[] modelMatrix = new float[16];
-        Matrix.setIdentityM(modelMatrix, 0);
-        if (NavigationActivity.getCurrentNode() != null) {
-            Node mCurrentNode = NavigationActivity.getCurrentNode();
-            
+            // set arrow position
+            float[] modelMatrix = new float[16];
+            Matrix.setIdentityM(modelMatrix, 0);
             Matrix.setLookAtM(modelMatrix, 0,
                     position[0] + target[0] * 2, position[1] + target[1] * 2, position[2] + target[2] * 2, mCurrentNode.x, position[1] + target[1] * 2, mCurrentNode.y,
                     0, 0, 1);
+
+            Matrix.translateM(modelMatrix, 0, position[0] + target[0] * 2, position[1] + target[1] * 2, position[2] + target[2] * 2);
+
+            // rotate arrow relative to camera
+            Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, modelMatrix, 0);
+            Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
+
+            arrow.draw(mMVPMatrix);
         }
-        Matrix.translateM(modelMatrix, 0, position[0] + target[0] * 2, position[1] + target[1] * 2, position[2] + target[2] * 2);
-
-        // rotate arrow relative to camera
-        Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, modelMatrix, 0);
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
-
-        arrow.draw(mMVPMatrix);
     }
 
     public void onSurfaceChanged(GL10 unused, int width, int height) {
