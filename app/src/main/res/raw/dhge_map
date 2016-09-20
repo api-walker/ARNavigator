@@ -1,3 +1,7 @@
+# current hardcoded map
+# each line has one statement either N or Node; C or Connection
+# N ID X Y Name  -- creates a new Node with ID at (X,Y) and the specified name
+# C ID1 ID2 Dist -- creates a new Connection from Node ID1 to Node ID2 (and vice versa) with the speficied distance
 Node 1 0 0 Start
 Node 2 2 0 S1
 Node 3 4 0 S2
