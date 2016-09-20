@@ -27,6 +27,11 @@ public class NodeGraph {
             String[] parts = line.split(" ");
 
             switch (parts[0]){
+                case "#":
+                    // Format: #_SPACE_Comment
+                    // # Comment
+                    // ex: # Exmaple comment
+                    break;
                 case "Node":
                 case "N":
                     // Format: N|Node_SPACE_<Node's id>_SPACE_<Node's x>_SPACE_<Node's y>_SPACE_<Node's name without whitespace>
@@ -45,7 +50,6 @@ public class NodeGraph {
                     nameToId.put(name, id);
                     idToNode.put(id, n);
                     break;
-
                 case "Connection":
                 case "Con":
                 case "C":
