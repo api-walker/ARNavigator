@@ -20,6 +20,7 @@ import me.dm7.barcodescanner.core.IViewFinder;
 public class NavigationView extends FrameLayout implements Camera.PreviewCallback {
     private CameraWrapper mCameraWrapper;
     private CameraPreview mPreview;
+    private ARGLSurfaceView mGLSurfaceView;
     private IViewFinder mViewFinderView;
     private Rect mFramingRectInPreview;
     private NavigationHandlerThread mCameraHandlerThread;
@@ -36,13 +37,18 @@ public class NavigationView extends FrameLayout implements Camera.PreviewCallbac
 
         mPreview = new CameraPreview(getContext(), cameraWrapper, this);
         mPreview.setShouldScaleToFill(mShouldScaleToFill);
+
+        mGLSurfaceView = new ARGLSurfaceView(getContext());
+
         if (!mShouldScaleToFill) {
             RelativeLayout relativeLayout = new RelativeLayout(getContext());
             relativeLayout.setGravity(Gravity.CENTER);
             relativeLayout.setBackgroundColor(Color.BLACK);
             relativeLayout.addView(mPreview);
             addView(relativeLayout);
+            addView(mGLSurfaceView);
         } else {
+            addView(mGLSurfaceView);
             addView(mPreview);
         }
     }

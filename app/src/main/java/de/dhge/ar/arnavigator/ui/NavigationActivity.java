@@ -18,8 +18,12 @@ public class NavigationActivity extends AppCompatActivity {
     private String objectID;
     private String objectName;
 
+    private static NavigationActivity instance;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        instance = this;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
@@ -37,6 +41,14 @@ public class NavigationActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         mNavigationView.stopCamera();           // Stop camera on pause
+    }
+
+    public static Object getSystemServiceHelper(String service)
+    {
+        if(instance == null)
+            return null;
+
+        return instance.getSystemService(service);
     }
 
     // Setup
