@@ -8,7 +8,7 @@ class ARGLSurfaceView extends GLSurfaceView {
 
     private final GLRenderer mRenderer;
 
-    public ARGLSurfaceView(Context context){
+    public ARGLSurfaceView(Context context) {
         super(context);
 
         // Create an OpenGL ES 2.0 context
@@ -17,7 +17,7 @@ class ARGLSurfaceView extends GLSurfaceView {
         mRenderer = new GLRenderer();
 
         // Set the Renderer for drawing on the GLSurfaceView
-        setEGLConfigChooser( 8, 8, 8, 8, 16, 0 );
+        setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         getHolder().setFormat(PixelFormat.TRANSLUCENT);
 
         setRenderer(mRenderer);

@@ -31,7 +31,7 @@ public class Arrow {
     };
 
     // Set color with red, green, blue and alpha (opacity) values
-    float color[] = { 0.63671875f, 0.76953125f, 0.22265625f, 1.0f };
+    float color[] = {0.63671875f, 0.76953125f, 0.22265625f, 1.0f};
 
     private final String vertexShaderCode =
             // This matrix member variable provides a hook to manipulate
@@ -57,17 +57,15 @@ public class Arrow {
 
     public Arrow(float[] color, float[] transform) {
 
-        if(color == null)
-            this.color = new float[] { 0.63671875f, 0.76953125f, 0.22265625f, 1.0f };
+        if (color == null)
+            this.color = new float[]{0.63671875f, 0.76953125f, 0.22265625f, 1.0f};
         else
             this.color = color;
 
-        if(transform == null)
-        {
+        if (transform == null) {
             mTransform = new float[16];
             Matrix.setIdentityM(mTransform, 0);
-        }
-        else
+        } else
             mTransform = transform;
 
         // initialize vertex byte buffer for shape coordinates

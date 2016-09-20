@@ -62,7 +62,7 @@ public class ScanResultDetailFragment extends Fragment {
         }
 
         TextView selectScan = (TextView) activity.findViewById(R.id.tv_select_scan);
-        if(selectScan != null) {
+        if (selectScan != null) {
             selectScan.setVisibility(View.GONE);
         }
     }
@@ -93,8 +93,7 @@ public class ScanResultDetailFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(!showURLIntent)
-        {
+        if (!showURLIntent) {
             // Prevent webView video playback
             resetWebView();
         }
@@ -134,8 +133,7 @@ public class ScanResultDetailFragment extends Fragment {
                     startActivity(intent);
                     showURLIntent = true;
                     return true;
-                }
-                else if(url.startsWith("mailto:")){
+                } else if (url.startsWith("mailto:")) {
                     Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse(url));
                     startActivity(intent);
                     showURLIntent = true;

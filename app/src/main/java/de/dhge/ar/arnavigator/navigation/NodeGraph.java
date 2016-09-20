@@ -11,8 +11,7 @@ public class NodeGraph {
     private Map<Integer, Node> idToNode;
     private ArrayList<String> names;
 
-    public NodeGraph(String definition)
-    {
+    public NodeGraph(String definition) {
         nameToId = new HashMap<>();
         idToNode = new HashMap<>();
         names = new ArrayList<>();
@@ -20,13 +19,12 @@ public class NodeGraph {
         parse(definition.replaceAll("\r", ""));
     }
 
-    private void parse(String definition)
-    {
+    private void parse(String definition) {
         String[] lines = definition.split("\n");
         for (String line : lines) {
             String[] parts = line.split(" ");
 
-            switch (parts[0]){
+            switch (parts[0]) {
                 case "#":
                     // Format: #_SPACE_Comment
                     // # Comment
@@ -70,13 +68,11 @@ public class NodeGraph {
         }
     }
 
-    public ArrayList<Node> getPath(String startName, String destinationName)
-    {
+    public ArrayList<Node> getPath(String startName, String destinationName) {
         return getPath(nameToId.get(startName), nameToId.get(destinationName));
     }
 
-    public ArrayList<Node> getPath(int startId, int destinationId)
-    {
+    public ArrayList<Node> getPath(int startId, int destinationId) {
         ArrayList<Node> path = new ArrayList<>();
 
         ArrayList<Node> open = new ArrayList<>();
@@ -84,10 +80,9 @@ public class NodeGraph {
 
         open.add(idToNode.get(startId));
 
-        while (open.size() != 0)
-        {
+        while (open.size() != 0) {
             Node current = open.get(0);
-            if(current.getId() == destinationId) {
+            if (current.getId() == destinationId) {
                 reconstructPath(path, current);
                 break;
             }
@@ -99,16 +94,15 @@ public class NodeGraph {
             float[] dists = current.getDistances();
             for (int i = 0; i < conns.length; i++) {
                 Node neighbour = idToNode.get(conns[i]);
-                if(closed.contains(neighbour))
+                if (closed.contains(neighbour))
                     continue;
 
                 float cost = current.cost + dists[i] + heuristic(current, neighbour);
-                if(cost < neighbour.cost || !open.contains(neighbour))
-                {
+                if (cost < neighbour.cost || !open.contains(neighbour)) {
                     neighbour.cost = cost;
                     neighbour.parent = current;
 
-                    if(!open.contains(neighbour))
+                    if (!open.contains(neighbour))
                         open.add(neighbour);
                 }
             }
@@ -129,18 +123,15 @@ public class NodeGraph {
         return names;
     }
 
-    private void reconstructPath(ArrayList<Node> path, Node target)
-    {
+    private void reconstructPath(ArrayList<Node> path, Node target) {
         Node n = target;
-        while (n != null)
-        {
+        while (n != null) {
             path.add(n);
             n = n.parent;
         }
     }
 
-    public float heuristic(Node a, Node b)
-    {
+    public float heuristic(Node a, Node b) {
         // Manhattan Distance
         float distX = Math.abs(b.x - a.x);
         float distY = Math.abs(b.y - a.y);

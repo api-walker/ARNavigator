@@ -13,8 +13,7 @@ public class Node {
     public Node parent;
     public float cost;
 
-    public Node(int id, float x, float y, String name)
-    {
+    public Node(int id, float x, float y, String name) {
         this.x = x;
         this.y = y;
 
@@ -25,31 +24,27 @@ public class Node {
         mDistances = new ArrayList<>();
     }
 
-    public void addConnection(int targetNode, float distance)
-    {
-        if(targetNode == mId)
+    public void addConnection(int targetNode, float distance) {
+        if (targetNode == mId)
             throw new IllegalArgumentException("\"targetNode\" may not be the same node!");
-        if(mConnections.contains(targetNode))
+        if (mConnections.contains(targetNode))
             throw new IllegalArgumentException("\"targetNode\" already contained in connections!");
-        if(distance <= 0)
+        if (distance <= 0)
             throw new IllegalArgumentException("\"distance\" has to be greater than 0!");
 
         mConnections.add(targetNode);
         mDistances.add(distance);
     }
 
-    public int getId()
-    {
+    public int getId() {
         return mId;
     }
 
-    public int getConnectionCount()
-    {
+    public int getConnectionCount() {
         return mConnections.size();
     }
 
-    public int[] getConnections()
-    {
+    public int[] getConnections() {
         int[] result = new int[mConnections.size()];
 
         for (int i = 0; i < result.length; i++)
@@ -58,8 +53,7 @@ public class Node {
         return result;
     }
 
-    public float[] getDistances()
-    {
+    public float[] getDistances() {
         float[] result = new float[mDistances.size()];
 
         for (int i = 0; i < result.length; i++)
@@ -69,8 +63,7 @@ public class Node {
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return mId + ": " + mName;
     }
 }

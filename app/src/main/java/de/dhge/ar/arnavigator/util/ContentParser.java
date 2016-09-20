@@ -27,7 +27,7 @@ public class ContentParser {
             doc.getDocumentElement().normalize();
             metaNode = (Element) doc.getElementsByTagName("Meta").item(0);
         } catch (SAXException e) {
-           // Invalid content
+            // Invalid content
         }
     }
 
