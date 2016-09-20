@@ -12,4 +12,5 @@
     <string name="downloading_webcontent">Webinhalt wird heruntergeladen...</string>
     <string name="invalid_qr_code_title">Ungültiger QR-Code</string>
     <string name="invalid_qr_code_text">Es können nur ARNavigator QR-Codes verwendet werden!</string>
+    <string name="title_select_destination">Ziel auswählen...</string>
 </resources>
