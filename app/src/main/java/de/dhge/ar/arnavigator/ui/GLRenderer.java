@@ -12,6 +12,7 @@ import android.opengl.Matrix;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import de.dhge.ar.arnavigator.navigation.Node;
 import de.dhge.ar.arnavigator.util.Arrow;
 
 public class GLRenderer implements GLSurfaceView.Renderer, SensorEventListener {
@@ -38,7 +39,7 @@ public class GLRenderer implements GLSurfaceView.Renderer, SensorEventListener {
 
         arrow = new Arrow(null, null);
 
-        rotationMatrix = new float [16];
+        rotationMatrix = new float[16];
         Matrix.setIdentityM(rotationMatrix, 0);
 
         // initialise geomagnetic (values may not be null)
@@ -66,21 +67,19 @@ public class GLRenderer implements GLSurfaceView.Renderer, SensorEventListener {
 
         // set camera view
         Matrix.setIdentityM(mViewMatrix, 0);
-        Matrix.translateM(mViewMatrix, 0, position[0], position[1], position[2]-2);
+        Matrix.translateM(mViewMatrix, 0, position[0], position[1], position[2] - 2);
         Matrix.multiplyMM(mViewMatrix, 0, rotationMatrix, 0, mViewMatrix, 0);
-        float[] target = new float[]{0,-1,0,1};
+        float[] target = new float[]{0, -1, 0, 1};
         float[] input = target.clone();
         Matrix.multiplyMV(target, 0, mViewMatrix, 0, input, 0);
 
         // calculate target direction
-        float mag = (float)Math.sqrt(target[0]*target[0] + target[1]*target[1] + target[2]*target[2]);
-        if(mag != 0) {
+        float mag = (float) Math.sqrt(target[0] * target[0] + target[1] * target[1] + target[2] * target[2]);
+        if (mag != 0) {
             target[0] /= mag;
             target[1] /= mag;
             target[2] /= mag;
-        }
-        else
-        {
+        } else {
             target[0] = 0;
             target[1] = 0;
             target[2] = 0;
@@ -89,11 +88,14 @@ public class GLRenderer implements GLSurfaceView.Renderer, SensorEventListener {
         // set arrow position
         float[] modelMatrix = new float[16];
         Matrix.setIdentityM(modelMatrix, 0);
-        Matrix.setLookAtM(modelMatrix, 0,
-                position[0] + target[0]*2, position[1] + target[1]*2, position[2] + target[2]*2,
-                NavigationActivity.getCurrentNode().x, position[1] + target[1]*2,  NavigationActivity.getCurrentNode().y,
-                0,0,1);
-        Matrix.translateM(modelMatrix, 0, position[0] + target[0]*2, position[1] + target[1]*2, position[2] + target[2]*2);
+        if (NavigationActivity.getCurrentNode() != null) {
+            Node mCurrentNode = NavigationActivity.getCurrentNode();
+            
+            Matrix.setLookAtM(modelMatrix, 0,
+                    position[0] + target[0] * 2, position[1] + target[1] * 2, position[2] + target[2] * 2, mCurrentNode.x, position[1] + target[1] * 2, mCurrentNode.y,
+                    0, 0, 1);
+        }
+        Matrix.translateM(modelMatrix, 0, position[0] + target[0] * 2, position[1] + target[1] * 2, position[2] + target[2] * 2);
 
         // rotate arrow relative to camera
         Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, modelMatrix, 0);
@@ -109,7 +111,7 @@ public class GLRenderer implements GLSurfaceView.Renderer, SensorEventListener {
         Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 1f, 20f);
     }
 
-    public static int loadShader(int type, String shaderCode){
+    public static int loadShader(int type, String shaderCode) {
         // create a vertex shader type (GLES20.GL_VERTEX_SHADER)
         // or a fragment shader type (GLES20.GL_FRAGMENT_SHADER)
         int shader = GLES20.glCreateShader(type);
@@ -121,8 +123,7 @@ public class GLRenderer implements GLSurfaceView.Renderer, SensorEventListener {
         return shader;
     }
 
-    public static int createShader(int vertexShader, int fragmentShader)
-    {
+    public static int createShader(int vertexShader, int fragmentShader) {
         int program = GLES20.glCreateProgram();
 
         // add the vertex shader to program
@@ -139,7 +140,7 @@ public class GLRenderer implements GLSurfaceView.Renderer, SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if(event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION){
+        if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
             if (prevTimestamp == -1 || (event.timestamp - prevTimestamp > 2000000684)) { //first run [in a while], ignore sensor and just update timestamp
                 prevTimestamp = event.timestamp;
             } else {
@@ -154,17 +155,16 @@ public class GLRenderer implements GLSurfaceView.Renderer, SensorEventListener {
                 velocity[2] = velocity[2] + deltaT * (rotationMatrix[8] * a[0] + rotationMatrix[9] * a[1] +
                         rotationMatrix[10] * a[2]);
 
-                if(velocity[0] < 0.125f && velocity[1] < 0.125f && velocity[2] < 0.125f)
+                if (velocity[0] < 0.125f && velocity[1] < 0.125f && velocity[2] < 0.125f)
                     return;
 
                 for (int i = 0; i < 3; i++) {
                     position[i] = position[i] + velocity[i];// * deltaT;
                 }
             }
-        }
-        else if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+        } else if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             float accelX = event.values[0];
-            float accelY= event.values[1];
+            float accelY = event.values[1];
             float accelZ = event.values[2];
 
             final float alpha = (float) 0.8;
@@ -175,7 +175,7 @@ public class GLRenderer implements GLSurfaceView.Renderer, SensorEventListener {
             gravity[1] = alpha * gravity[1] + (1 - alpha) * accelY;
             gravity[2] = alpha * gravity[2] + (1 - alpha) * accelZ;
             mSensorManager.getRotationMatrix(rotationMatrix, null, gravity, geomagnetic);
-        } else if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD){
+        } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
             geomagnetic = event.values.clone();
         }
     }
