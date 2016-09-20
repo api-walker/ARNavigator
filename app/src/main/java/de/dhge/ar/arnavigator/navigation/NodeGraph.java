@@ -9,11 +9,13 @@ import java.util.Map;
 public class NodeGraph {
     private Map<String, Integer> nameToId;
     private Map<Integer, Node> idToNode;
+    private ArrayList<String> names;
 
     public NodeGraph(String definition)
     {
         nameToId = new HashMap<>();
         idToNode = new HashMap<>();
+        names = new ArrayList<>();
 
         parse(definition.replaceAll("\r", ""));
     }
@@ -34,6 +36,9 @@ public class NodeGraph {
                     float x = Float.parseFloat(parts[2]);
                     float y = Float.parseFloat(parts[3]);
                     String name = parts[4];
+
+                    // add name to list
+                    names.add(name);
 
                     Node n = new Node(id, x, y, name);
 
@@ -113,6 +118,11 @@ public class NodeGraph {
         }
 
         return path;
+    }
+
+    // Returns an array of names from the map
+    public ArrayList<String> getNames() {
+        return names;
     }
 
     private void reconstructPath(ArrayList<Node> path, Node target)
