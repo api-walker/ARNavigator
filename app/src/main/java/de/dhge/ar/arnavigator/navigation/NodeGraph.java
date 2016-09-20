@@ -89,18 +89,18 @@ public class NodeGraph {
             int[] conns = current.getConnections();
             float[] dists = current.getDistances();
             for (int i = 0; i < conns.length; i++) {
-                Node neighor = idToNode.get(conns[i]);
-                if(closed.contains(neighor))
+                Node neighbour = idToNode.get(conns[i]);
+                if(closed.contains(neighbour))
                     continue;
 
-                float cost = current.cost + dists[i] + heuristic(current, neighor);
-                if(cost < neighor.cost || !open.contains(neighor))
+                float cost = current.cost + dists[i] + heuristic(current, neighbour);
+                if(cost < neighbour.cost || !open.contains(neighbour))
                 {
-                    neighor.cost = cost;
-                    neighor.parent = current;
+                    neighbour.cost = cost;
+                    neighbour.parent = current;
 
-                    if(!open.contains(neighor))
-                        open.add(neighor);
+                    if(!open.contains(neighbour))
+                        open.add(neighbour);
                 }
             }
 
