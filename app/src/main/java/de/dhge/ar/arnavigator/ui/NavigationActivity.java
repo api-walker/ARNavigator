@@ -18,6 +18,7 @@ import java.util.List;
 import de.dhge.ar.arnavigator.R;
 import de.dhge.ar.arnavigator.navigation.Node;
 import de.dhge.ar.arnavigator.navigation.NodeGraph;
+import de.dhge.ar.arnavigator.util.MapUtils;
 
 public class NavigationActivity extends AppCompatActivity {
 
@@ -94,7 +95,7 @@ public class NavigationActivity extends AppCompatActivity {
     }
 
     private void initializeMapEnvironment() {
-        String definition = readMapFile(getResources().openRawResource(R.raw.dhge_map));
+        String definition = MapUtils.readMapFile(getResources().openRawResource(R.raw.dhge_map));
         nodeGraph = new NodeGraph(definition);
         objectNames = nodeGraph.getNames();
     }
@@ -123,11 +124,10 @@ public class NavigationActivity extends AppCompatActivity {
 
     // If new activity show picker, else set arrow
     public void manageDestination() {
-        if(destination == null) {
+        if (destination == null) {
             // let the user pick a destination
             showDestinationDialog();
-        }
-        else {
+        } else {
             setCurrentNode();
         }
     }
@@ -160,23 +160,5 @@ public class NavigationActivity extends AppCompatActivity {
             return null;
 
         return instance.currentNode;
-    }
-
-    // Reads map from resources
-    private String readMapFile(InputStream inputStream) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        byte buf[] = new byte[1024];
-        int len;
-        try {
-            while ((len = inputStream.read(buf)) != -1) {
-                outputStream.write(buf, 0, len);
-            }
-            outputStream.close();
-            inputStream.close();
-        } catch (IOException e) {
-
-        }
-        return outputStream.toString();
     }
 }

@@ -38,14 +38,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import de.dhge.ar.arnavigator.R;
+import de.dhge.ar.arnavigator.navigation.NodeGraph;
 import de.dhge.ar.arnavigator.util.ContentParser;
 import de.dhge.ar.arnavigator.util.ContentType;
 import de.dhge.ar.arnavigator.util.HTMLFormatter;
+import de.dhge.ar.arnavigator.util.MapUtils;
 import de.dhge.ar.arnavigator.util.ScanResult;
 import de.dhge.ar.arnavigator.util.TinyDB;
 import me.dm7.barcodescanner.zbar.Result;
@@ -88,6 +91,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     private String objectID;
     private String objectName;
     private String result;
+    private ArrayList<String> objectNames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +102,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
         initializePolicies();
 
         initializeDB();
+        initializeMapEnvironment();
 
         // Assign View IDs and general setup
         initializeViews();
@@ -284,6 +289,7 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
                         break;
                     case ContentType.ONLINE_TARGET:
                         arTypeIcon.setImageResource(R.drawable.ic_online_target);
+                        break;
                     case ContentType.EXIT:
                         arTypeIcon.setImageResource(R.drawable.ic_exit);
                         break;
@@ -294,10 +300,9 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
                 switch (cp.getType()) {
                     case ContentType.ROOM:
                         // is webcontent ?
-                        if(cp.isWebContent()) {
+                        if (cp.isWebContent()) {
                             setWebContent(content);
-                        }
-                        else {
+                        } else {
                             // Set webView
                             if (cp.isRawContent()) {
                                 content = new HTMLFormatter(content).prettyPrint("white", "none", "20pt", "");
@@ -307,10 +312,9 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
                         break;
                     case ContentType.MEDIA:
                         // is webcontent ?
-                        if(cp.isWebContent()) {
+                        if (cp.isWebContent()) {
                             setWebContent(content);
-                        }
-                        else {
+                        } else {
                             if (cp.isRawContent()) {
                                 content = new HTMLFormatter(content).getWebSite();
                             }
@@ -382,7 +386,10 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
 
         if (viewState) {
             arPopupMenu.setVisibility(View.VISIBLE);
-            routeButton.setVisibility(View.VISIBLE);
+            // show route button if object is defined on map
+            if(objectOnMap(objectName)) {
+                routeButton.setVisibility(View.VISIBLE);
+            }
             // hide flash button on popup
             flashButton.setVisibility(View.GONE);
         } else {
@@ -423,6 +430,12 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
     private void initializeDB() {
         // setup Toolbar
         db = new TinyDB(context);
+    }
+
+    private void initializeMapEnvironment() {
+        String definition = MapUtils.readMapFile(getResources().openRawResource(R.raw.dhge_map));
+        NodeGraph nodeGraph = new NodeGraph(definition);
+        objectNames = nodeGraph.getNames();
     }
 
     private void initializePolicies() {
@@ -519,6 +532,15 @@ public class CameraActivity extends AppCompatActivity implements ZBarScannerView
         });
         // webView.setWebViewClient(new WebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);
+    }
+
+    // Checks if an object is defined on map
+    private boolean objectOnMap(String objectName) {
+        for(String object: objectNames){
+            if(object.equals(objectName))
+                return true;
+        }
+        return false;
     }
 
     // Appendix
