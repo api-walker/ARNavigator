@@ -1,0 +1,17 @@
+Node 1 0 0 Start
+Node 2 2 0 S1
+Node 3 4 0 S2
+Node 4 7 0 Kreuzung
+Node 5 7 -1 Treppe
+Node 6 7 -3 Weg
+Node 7 7 3 AndererWeg
+Node 8 6 4 Unten
+Node 9 4 6 Labor
+C 1 2 2
+C 2 3 2
+C 3 4 3
+C 4 5 1
+C 4 6 3
+C 4 7 3
+C 5 8 6
+C 8 9 4
