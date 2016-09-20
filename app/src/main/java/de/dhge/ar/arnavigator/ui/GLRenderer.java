@@ -89,6 +89,10 @@ public class GLRenderer implements GLSurfaceView.Renderer, SensorEventListener {
         // set arrow position
         float[] modelMatrix = new float[16];
         Matrix.setIdentityM(modelMatrix, 0);
+        Matrix.setLookAtM(modelMatrix, 0,
+                position[0] + target[0]*2, position[1] + target[1]*2, position[2] + target[2]*2,
+                NavigationActivity.getCurrentNode().x, position[1] + target[1]*2,  NavigationActivity.getCurrentNode().y,
+                0,0,1);
         Matrix.translateM(modelMatrix, 0, position[0] + target[0]*2, position[1] + target[1]*2, position[2] + target[2]*2);
 
         // rotate arrow relative to camera

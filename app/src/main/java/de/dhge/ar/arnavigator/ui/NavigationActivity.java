@@ -22,6 +22,7 @@ public class NavigationActivity extends AppCompatActivity {
     private String objectID;
     private String objectName;
     private NodeGraph nodeGraph;
+    private Node currentNode;
 
     private static NavigationActivity instance;
 
@@ -80,6 +81,14 @@ public class NavigationActivity extends AppCompatActivity {
         return instance.getSystemService(service);
     }
 
+    public static Node getCurrentNode()
+    {
+        if(instance == null)
+            return null;
+
+        return instance.currentNode;
+    }
+
     // Setup
     private void initializeViews() {
         // Add NavigationView
@@ -102,6 +111,7 @@ public class NavigationActivity extends AppCompatActivity {
 
         // calculates the path using the map from start to finish (as string or id)
         ArrayList<Node> path = nodeGraph.getPath(objectName, "Labor");
+        currentNode = path.get(0);
     }
 
     private void setListeners() {
