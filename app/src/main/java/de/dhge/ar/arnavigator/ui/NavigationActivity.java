@@ -7,7 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
+
 import de.dhge.ar.arnavigator.R;
+import de.dhge.ar.arnavigator.navigation.Node;
+import de.dhge.ar.arnavigator.navigation.NodeGraph;
 
 public class NavigationActivity extends AppCompatActivity {
 
@@ -17,6 +21,7 @@ public class NavigationActivity extends AppCompatActivity {
     // AR Object
     private String objectID;
     private String objectName;
+    private NodeGraph nodeGraph;
 
     private static NavigationActivity instance;
 
@@ -26,6 +31,30 @@ public class NavigationActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
+
+        // current hardcoded map
+        // each line has one statement either N or Node; C or Connection
+        // N ID X Y Name  -- creates a new Node with ID at (X,Y) and the specified name
+        // C ID1 ID2 Dist -- creates a new Connection from Node ID1 to Node ID2 (and vice versa) with the speficied distance
+        String definition = "Node 1 0 0 Start\n" +
+                "Node 2 2 0 S1\n" +
+                "Node 3 4 0 S2\n" +
+                "Node 4 7 0 Kreuzung\n" +
+                "Node 5 7 -1 Treppe\n" +
+                "Node 6 7 -3 Weg\n" +
+                "Node 7 7 3 AndererWeg\n" +
+                "Node 8 6 4 Unten\n" +
+                "Node 9 4 6 Labor\n" +
+                "C 1 2 2\n" +
+                "C 2 3 2\n" +
+                "C 3 4 3\n" +
+                "C 4 5 1\n" +
+                "C 4 6 3\n" +
+                "C 4 7 3\n" +
+                "C 5 8 6\n" +
+                "C 8 9 4";
+
+        nodeGraph = new NodeGraph(definition);
 
         initializeViews();
         setListeners();
@@ -70,6 +99,9 @@ public class NavigationActivity extends AppCompatActivity {
 
         objectID = scannerIntent.getStringExtra(CameraActivity.OBJECT_ID);
         objectName = scannerIntent.getStringExtra(CameraActivity.OBJECT_NAME);
+
+        // calculates the path using the map from start to finish (as string or id)
+        ArrayList<Node> path = nodeGraph.getPath(objectName, "Labor");
     }
 
     private void setListeners() {
